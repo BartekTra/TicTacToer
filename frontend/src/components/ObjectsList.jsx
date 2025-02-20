@@ -11,7 +11,7 @@ function ObjectsList() {
   useEffect(() => {
 
     const fetchButtons = async () => {
-      const response = await fetch("http://localhost:3000/buttons");
+      const response = await fetch(process.en.BACKEND_BUTTONS_URL);
       const json = await response.json();
       setButtons(json);
     }
@@ -22,7 +22,7 @@ function ObjectsList() {
 
   useEffect(() => {
     const FetchGames = async () => {
-      const response = await fetch("http://localhost:3000/games");
+      const response = await fetch(process.en.BACKEND_GAMES_URL);
       const json = await response.json();
       setGames(json);
     }
@@ -34,7 +34,7 @@ function ObjectsList() {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/graphql', {
+      const response = await fetch(process.en.BACKEND_GRAPHQL_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
