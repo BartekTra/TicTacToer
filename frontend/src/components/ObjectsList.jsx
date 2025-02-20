@@ -8,10 +8,12 @@ function ObjectsList() {
   const [player, setPlayer] = useState("");
   const navigate = useNavigate();
   const [realuuid, setRealuuid] = useState("");
+  const test = import.meta.env.VITE_BACKEND_GRAPHQL_URL;
+  console.log(import.meta.env.VITE_BACKEND_GRAPHQL_URL)
   useEffect(() => {
 
     const fetchButtons = async () => {
-      const response = await fetch(process.en.BACKEND_BUTTONS_URL);
+      const response = await fetch(import.meta.env.VITE_BACKEND_BUTTONS_URL);
       const json = await response.json();
       setButtons(json);
     }
@@ -22,7 +24,7 @@ function ObjectsList() {
 
   useEffect(() => {
     const FetchGames = async () => {
-      const response = await fetch(process.en.BACKEND_GAMES_URL);
+      const response = await fetch(import.meta.env.VITE_BACKEND_GAMES_URL);
       const json = await response.json();
       setGames(json);
     }
@@ -34,7 +36,7 @@ function ObjectsList() {
     event.preventDefault();
 
     try {
-      const response = await fetch(process.en.BACKEND_GRAPHQL_URL, {
+      const response = await fetch(import.meta.env.VITE_BACKEND_GRAPHQL_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -100,6 +102,7 @@ function ObjectsList() {
 
   return (
     <div>
+      <p>%BACKEND_GRAPHQL_URL%</p>
       <form onSubmit={handleSubmit}>
         <input
           className="joinInput"

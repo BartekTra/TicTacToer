@@ -24,7 +24,7 @@ function Games() {
   
 
   useEffect(() => {
-    const ws = new WebSocket(process.env.BACKEND_WS_URL);
+    const ws = new WebSocket(import.meta.env.VITE_BACKEND_WS_URL);
     ws.onopen = () => {
       setGuid(Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
       ws.send(
