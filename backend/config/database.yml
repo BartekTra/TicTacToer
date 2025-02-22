@@ -13,23 +13,23 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: ENV['DATABASE_USERNAME']
-  password: ENV['DATABASE_PASSWORD']
-  host: ENV['DATABASE_HOSTNAME']
+  username: testingveryuser
+  password: 12qwaszx
+  host: localhost
 
 development:
   <<: *default
-  database: ENV['DATABASE_DEVELOPMENT_NAME']
+  database: tictactoer
 
 test:
   <<: *default
-  database: ENV['DATABASE_TEST_NAME']
+  database: tictactoer_test
 
 production:
   <<: *default
-  database: ENV['DATABASE_PRODUCTION_NAME']
-  username: ENV['DATABASE_PRODUCTION_USERNAME']
-  password: ENV['DATABASE_PRODUCTION_PASSWORD']
+  database: tictactoer_production
+  username: testingveryuser
+  password: 12qwaszx
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
