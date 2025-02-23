@@ -8,8 +8,6 @@ function ObjectsList() {
   const [player, setPlayer] = useState("");
   const navigate = useNavigate();
   const [realuuid, setRealuuid] = useState("");
-  const test = import.meta.env.VITE_BACKEND_GRAPHQL_URL;
-  console.log(import.meta.env.VITE_BACKEND_GRAPHQL_URL)
   useEffect(() => {
 
     const fetchButtons = async () => {
@@ -102,7 +100,6 @@ function ObjectsList() {
 
   return (
     <div>
-      <p>%BACKEND_GRAPHQL_URL%</p>
       <form onSubmit={handleSubmit}>
         <input
           className="joinInput"
