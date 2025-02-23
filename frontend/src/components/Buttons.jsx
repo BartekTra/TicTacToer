@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
-const ws = new WebSocket("ws://localhost:3000/cable");
+const ws = new WebSocket(import.meta.env.VITE_BACKEND_WS_URL);
 
 function Buttons() {
   const [count, setCount] = useState(null);
@@ -49,7 +49,7 @@ function Buttons() {
 
   useEffect (() => {
     const fetchCount = async () => {
-      const response = await fetch("http://localhost:3000/buttons/" + id);
+      const response = await fetch(import.meta.env.VITE_BACKEND_BUTTONS_URL + id);
       const json = await response.json();
       setCount(json.count);
     }
@@ -66,7 +66,7 @@ function Buttons() {
       <h1> id: {id} </h1>
       <h1> count: {count} </h1>
       <button onClick={() => {
-        fetch("http://localhost:3000/buttons/" + id, {
+        fetch(import.meta.env.VITE_BACKEND_BUTTONS_URL + id, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
