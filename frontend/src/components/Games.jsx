@@ -3,7 +3,8 @@ import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
 import { HANDLE_MOVE } from '../graphql/mutations/handleMoveMutation';
 import { FETCH_GAMESTATE } from "../graphql/queries/fetchGamestateQuery";
-
+import XsymbolImage from "../assets/X_symbol_tictactoer.png";
+import OsymbolImage from "../assets/O_symbol_tictactoer.png";
 function Games() {
   const { id } = useParams();
   const [guid, setGuid] = useState("");
@@ -17,7 +18,7 @@ function Games() {
     useEffect(() => {
       
       if (data2) {
-        console.log("tutaj: ", data2)
+        console.log("tutaj test: ", data2)
         setGamestate(data2.fetchGamestate);
       }
     }, [data2]);
@@ -26,6 +27,7 @@ function Games() {
   useEffect(() => {
     const ws = new WebSocket(import.meta.env.VITE_BACKEND_WS_URL);
     ws.onopen = () => {
+      console.log("Connected to GamesChannel_" + id)
       setGuid(Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
       ws.send(
         JSON.stringify({
@@ -39,7 +41,7 @@ function Games() {
     };
 
     ws.onclose = () => {
-      console.log("Closed the connection");
+      console.log("Closed the connection by react");
       ws.close();
     };
 
@@ -90,45 +92,49 @@ function Games() {
     setRealuuid(uuid);
   }, []);
 
-  if (!gamestate) return <h1> loading ... </h1>;
+  if (!gamestate) return <h1> Loading ... </h1>;
+  if(!gamestate.board) return <h1> test... </h1>;
   if (loading) return <p>Loading... {loading}</p>;
   if (error) return <p>Error :{error.message}</p>;
 
   return (
-    <div className="games">
-      <p>Your GUID: {realuuid}</p>
+    <div className="games bg-[#0d0d0d] text-white min-h-screen flex flex-col items-center p-5">
+      <p className="text-lg font-semibold">Your GUID: {realuuid}</p>
       {gamestate && (
-        <div>
-          <h2>Game Details</h2>
-          <p>Player 1: {gamestate.player1}</p>
-          <p>Player 2: {gamestate.player2}</p>
-          <p>Current Turn: {gamestate.currentturn === gamestate.player1guid ? gamestate.player1 : gamestate.player2}</p>
-          <h1>
-            Winner:{" "}
-            {gamestate.winner === gamestate.player1guid
+        <div className="bg-[#202020] p-5 rounded-lg shadow-lg w-full max-w-md mt-5">
+          <h2 className="text-xl font-bold mb-3">Game Details</h2>
+          <p className="text-gray-300">Player 1: {gamestate.player1}</p>
+          <p className="text-gray-300">Player 2: {gamestate.player2}</p>
+          <p className="text-gray-300">
+            Current Turn: {gamestate.currentturn === gamestate.player1guid ? gamestate.player1 : gamestate.player2}
+          </p>
+          <h1 className="text-xl font-bold text-white mt-3">
+            Winner: {gamestate.winner === gamestate.player1guid
               ? gamestate.player1
               : gamestate.winner === gamestate.player2guid
               ? gamestate.player2
-              : null}
+              : "No winner yet"}
           </h1>
-          <p>Count: {gamestate.count}</p>
+          <p className="text-gray-300">Count: {gamestate.count}</p>
         </div>
       )}
-      <h1>Game: {gamestate.count}</h1>
-      <div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 100px)", gap: "10px" }}>
-          {gamestate.board && gamestate.board.length >= 9
-            ? [...Array(9)].map((_, index) => (
-                <button
-                  key={index}
-                  onClick={(e) => handleMove(e, index)}
-                  style={{ width: "100px", height: "100px", fontSize: "24px" }}
-                >
-                  {gamestate.board[index] != 0 && gamestate.board[index] != 9 ? gamestate.board[index] : ""}
-                </button>
-              ))
-            : null}
+      <h1 className="text-2xl font-bold mt-5">Game: {gamestate.count}</h1>
+      <div className="mt-5">
+        
+        <div className="grid grid-cols-3 w-80 h-80 mx-auto">
+          {gamestate.board.split("").map((cell, index) => (
+            <div key={index} className="w-full h-full flex justify-center items-center border">
+              <div
+                key={index}
+                className="w-full h-full flex justify-center items-center cursor-pointer hover:bg-gray-300 transition"
+                onClick={(e) => cell !== "X" && cell !== "O" && handleMove(e, index)}
+              />
+              {cell === "X" && <img src={XsymbolImage} alt="X" className="w-16 h-16" />}
+              {cell === "O" && <img src={OsymbolImage} alt="O" className="w-16 h-16" />}
+            </div>
+          ))}
         </div>
+        
       </div>
     </div>
   );

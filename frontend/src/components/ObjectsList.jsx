@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
 import "./ObjectsList.css";
+import { isRequiredArgument } from "graphql";
+import XsymbolImage from "../assets/X_symbol_tictactoer.png";
+
+
 function ObjectsList() {
   const [buttons, setButtons] = useState([]);
   const [games, setGames] = useState([]);
@@ -99,21 +103,34 @@ function ObjectsList() {
   if (!buttons) return null;
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          className="joinInput"
-          type="text"
-          value={player}
-          onChange={(event) => setPlayer(event.target.value)}
-          placeholder="Enter player name"
-        />
-        <button className="joinButton" type="submit">
-          Join or Create Game
-        </button>
-      </form>
-        
+    <div class="bg-[#0d0d0d] h-full">
+        <div class="flex flex-col items-center justify-center h-full">
+          <div class="flex flex-row items-center justify-center h-screen w-1/3 border-x-1 border-white">
+            <form onSubmit={handleSubmit} class="flex flex-col w-full">
+              <input
+                class="border-y-1 text-white p-[5px] h-15
+                hover:bg-[#202020]
+                focus:bg-[#2D2D2D] focus:outline-none
+                "
+                type="text"
+                value={player}
+                onChange={(event) => setPlayer(event.target.value)}
+                placeholder="Enter player name"
+              />
+              <button type="submit" class="outline-1 outline-white 
+              text-white font-bold bg-[#141414] h-15 
+              hover:bg-[#202020] 
+              active:bg-[#2D2D2D] ">
+                Join or Create Game
+              </button>
+              <img
+                src={XsymbolImage}
+              />
+            </form>
+          </div>
+        </div>
     </div>
+
 
     
   )
