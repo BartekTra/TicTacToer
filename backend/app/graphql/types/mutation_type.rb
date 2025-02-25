@@ -2,27 +2,17 @@
 
 module Types
   class MutationType < Types::BaseObject
-    # TODO: remove me
-    field :test_field, String, null: false,
-      description: "An example field added by the generator"
-    def test_field
-      "Hello World"
-    end
-
-    field :move, Types::GameType, null: false do
+    field :move, Types::GameType, null: false, 
+    description: "Update the gameboard based on which cell was clicked and which players' turn it is" do
       argument :cell, Integer, required: true
       argument :id, ID, required: true
     end
 
     def move(cell:, id:)
       tempGame = Game.find(id)
-      if tempGame.currentturn == tempGame.player1guid
-        tempGame.board[cell] = "O"
-        tempGame.currentturn = tempGame.player2guid
-      else
-        tempGame.board[cell] = "X"
-        tempGame.currentturn = tempGame.player1guid
-      end
+      if tempGame.currentturn == tempGame.player1guid 
+      ? tempGame.board[cell] = "O" 
+      : tempGame.board[cell] = "X"
       tempGame.save
       tempGame
     end
