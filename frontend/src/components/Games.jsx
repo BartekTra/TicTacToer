@@ -5,30 +5,41 @@ import { HANDLE_MOVE } from '../graphql/mutations/handleMoveMutation';
 import { FETCH_GAMESTATE } from "../graphql/queries/fetchGamestateQuery";
 import XsymbolImage from "../assets/X_symbol_tictactoer.png";
 import OsymbolImage from "../assets/O_symbol_tictactoer.png";
+import { useRef } from "react";
 function Games() {
   const { id } = useParams();
   const [guid, setGuid] = useState("");
   const [realuuid, setRealuuid] = useState("");
   const [gamestate, setGamestate] = useState([]);
+  const [handleMoveQuery] = useMutation(HANDLE_MOVE); // Hook useMutation musi być zawsze wywołany w tej samej kolejności
+  const wsRef = useRef(null);
+
   const { data: data2, loading, error } = useQuery(FETCH_GAMESTATE, {
     variables: { id: id },
   });
-  const [handleMoveQuery] = useMutation(HANDLE_MOVE); // Hook useMutation musi być zawsze wywołany w tej samej kolejności
-  
-    useEffect(() => {
-      
-      if (data2) {
-        console.log("tutaj test: ", data2)
-        setGamestate(data2.fetchGamestate);
-      }
-    }, [data2]);
+  useEffect(() => {
+    
+    if (data2) {
+      console.log("tutaj test: ", data2)
+      setGamestate(data2.fetchGamestate);
+    }
+  }, [data2]);
   
 
   useEffect(() => {
-    const ws = new WebSocket(import.meta.env.VITE_BACKEND_WS_URL);
+    // Jeśli WebSocket już istnieje, zamknij go przed otwarciem nowego
+    if (wsRef.current) {
+      console.warn("Closing old WebSocket before creating a new one...");
+      wsRef.current.close();
+    }
+
+    wsRef.current = new WebSocket(import.meta.env.VITE_BACKEND_WS_URL);
+    const ws = wsRef.current;
+    
+    console.log("Creating new WebSocket...");
+
     ws.onopen = () => {
-      console.log("Connected to GamesChannel_" + id)
-      setGuid(Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
+      console.log("Connected to GamesChannel_" + id);
       ws.send(
         JSON.stringify({
           command: "subscribe",
@@ -40,32 +51,24 @@ function Games() {
       );
     };
 
-    ws.onclose = () => {
-      console.log("Closed the connection by react");
-      ws.close();
-    };
-
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type !== "welcome" && data.type !== "ping" && data.type !== "confirm_subscription") {
+      if (data.type === "ping") {
+        console.log("Ping received");
+      } else if (data.type !== "welcome" && data.type !== "confirm_subscription") {
+        console.log("Game update:", data.message);
         setGamestate(data.message);
       }
     };
 
+    // Cleanup: Zamknij WebSocket po opuszczeniu strony
     return () => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(
-          JSON.stringify({
-            command: "unsubscribe",
-            identifier: JSON.stringify({
-              id: `${id}`,
-              channel: "GamesChannel",
-            }),
-          })
-        );
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        console.log("Closing WebSocket before unmounting...");
+        wsRef.current.close();
       }
     };
-  }, [id, gamestate]);
+  }, [id]); // Uruchamia się tylko, gdy zmienia się `id`
 
   // Funkcja do obsługi ruchu gracza
   const handleMove = async (event, cell) => {
@@ -113,6 +116,8 @@ function Games() {
               ? gamestate.player1
               : gamestate.winner === gamestate.player2guid
               ? gamestate.player2
+              : gamestate.winner === "draw"
+              ? "The game ended with a draw!" 
               : "No winner yet"}
           </h1>
           <p className="text-gray-300">Count: {gamestate.count}</p>
@@ -121,16 +126,16 @@ function Games() {
       <h1 className="text-2xl font-bold mt-5">Game: {gamestate.count}</h1>
       <div className="mt-5">
         
-        <div className="grid grid-cols-3 w-80 h-80 mx-auto">
+        <div className="grid grid-cols-3 w-90 h-90 mx-auto">
           {gamestate.board.split("").map((cell, index) => (
-            <div key={index} className="w-full h-full flex justify-center items-center border">
+            <div key={index} className="w-30 h-30 flex justify-center items-center border">
+              {cell === "X" && <img src={XsymbolImage} className="w-full h-full pointer-events-none" />}
+              {cell === "O" && <img src={OsymbolImage} className="w-full h-full pointer-events-none" />}
               <div
                 key={index}
                 className="w-full h-full flex justify-center items-center cursor-pointer hover:bg-gray-300 transition"
                 onClick={(e) => cell !== "X" && cell !== "O" && handleMove(e, index)}
               />
-              {cell === "X" && <img src={XsymbolImage} alt="X" className="w-16 h-16" />}
-              {cell === "O" && <img src={OsymbolImage} alt="O" className="w-16 h-16" />}
             </div>
           ))}
         </div>
