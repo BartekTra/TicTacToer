@@ -1,8 +1,10 @@
 class Game < ApplicationRecord
   after_update_commit do
-    broadcast_game
     check_winner
+    broadcast_game
+    check_game_status
   end
+  
   after_create_commit { broadcast_game }
 
   def broadcast_game
@@ -15,7 +17,8 @@ class Game < ApplicationRecord
       player2guid: player2guid,
       currentturn: currentturn,
       winner: winner,
-      count: count
+      count: count,
+      movecounter: movecounter
     })
   end
 
@@ -25,14 +28,24 @@ class Game < ApplicationRecord
     [ 0, 4, 8 ], [ 2, 4, 6 ]
   ]
 
-def check_winner
-  WIN_COMBINATIONS.each do |combo|
-    if (board[combo[0]] == board[combo[1]] && board[combo[1]] == board[combo[2]]) && (board[combo[0]] != "0" && board[combo[0]] != "9") 
-      if winner == nil
-        update(winner: board[combo[0]] == "O" ? player1guid : player2guid)
+  def check_winner
+    WIN_COMBINATIONS.each do |combo|
+      if (board[combo[0]] == board[combo[1]] && board[combo[1]] == board[combo[2]]) && (board[combo[0]] != "0" && board[combo[0]] != "9") 
+        if winner == nil
+          update(winner: board[combo[0]] == "O" ? player1guid : player2guid)
+        end
       end
     end
+    if (movecounter == 9 && winner == nil)
+      update(winner: "draw")
+    end 
+    nil
   end
-  nil
-end
+
+  def check_game_status
+    if winner != nil
+      GamesChannel.broadcast_to(self, { action: "disconnect" })
+      GameCleanupJob.set(wait: 5.seconds).perform_later(id)
+    end
+  end
 end
