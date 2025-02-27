@@ -11,8 +11,13 @@ module Types
     def move(cell:, id:)
       tempGame = Game.find(id)
       if tempGame.currentturn == tempGame.player1guid 
-      ? tempGame.board[cell] = "O" 
-      : tempGame.board[cell] = "X"
+        tempGame.board[cell] = "O"
+        tempGame.currentturn = tempGame.player2guid 
+      else 
+        tempGame.board[cell] = "X"
+        tempGame.currentturn = tempGame.player1guid
+      end
+      tempGame.movecounter += 1
       tempGame.save
       tempGame
     end

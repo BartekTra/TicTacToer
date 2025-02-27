@@ -9,5 +9,6 @@ module Types
     field :count, Integer
     field :player1guid, String
     field :player2guid, String
+    field :moecounter, Integer
   end
 end

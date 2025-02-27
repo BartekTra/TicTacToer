@@ -30,9 +30,11 @@ module Types
 
     def update_players_guid(playerGuid:, id:)
       game = Game.find(id)
-      game.player1guid == nil 
-      ? game.player1guid = playerGuid 
-      : game.player2guid = playerGuid
+      if game.player1guid == nil 
+        game.player1guid = playerGuid 
+      else
+        game.player2guid = playerGuid
+      end
       game.save
       game
     end
@@ -47,7 +49,11 @@ module Types
 
     def join_or_create_game(player:, realuuid:)
       tempGame = Game.order(created_at: :desc).first
-      if tempGame == nil || tempGame.player2 != nil
+      if tempGame == nil || \
+        (tempGame.player2 != nil && \
+        realuuid != tempGame.player1guid && \
+        realuuid != tempGame.player2guid)
+
         game = Game.create(
           player1: player,
           player2: nil,
@@ -56,16 +62,21 @@ module Types
           currentturn: realuuid,
           winner: nil,
           count: 0,
-          board: "000999000"
+          board: "000999000",
+          movecounter: 0
         )
         game.save
-        game
-      else
+        return game
+      elsif realuuid == tempGame.player1guid 
+        tempGame.player1 = player
+      elsif realuuid == tempGame.player2guid
+        tempGame.player2 = player
+      else 
         tempGame.player2 = player
         tempGame.player2guid = realuuid
-        tempGame.save
-        tempGame
       end
+      tempGame.save
+      tempGame
     end
   end
 end

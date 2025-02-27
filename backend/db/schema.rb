@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_25_213710) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_27_115850) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -47,6 +47,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_25_213710) do
     t.integer "count"
     t.string "player1guid"
     t.string "player2guid"
+    t.integer "movecounter"
   end
 
   create_table "posts", force: :cascade do |t|
