@@ -44,7 +44,7 @@ class Game < ApplicationRecord
 
   def check_game_status
     if winner != nil
-      GamesChannel.broadcast_to(self, { action: "disconnect" })
+      ActionCable.server.broadcast("GamesChannel_#{id}", { action: "please :)" })
       GameCleanupJob.set(wait: 5.seconds).perform_later(id)
     end
   end
