@@ -11,6 +11,7 @@ export const JOIN_OR_CREATE_GAME = gql`
       winner
       player1guid
       player2guid
+      movecounter
     }
   }
 `;

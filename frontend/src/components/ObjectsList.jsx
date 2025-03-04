@@ -14,17 +14,19 @@ function ObjectsList() {
   const [player, setPlayer] = useState("");
   const navigate = useNavigate();
   const [realuuid, setRealuuid] = useState("");
-  const [joinOrCreateGame, { loading, error }] = useLazyQuery(JOIN_OR_CREATE_GAME, {
+  
+  const [joinOrCreateGame, { data }] = useLazyQuery(JOIN_OR_CREATE_GAME, {
     onCompleted: (data) => {
       if (data?.joinOrCreateGame?.id) {
-        console.log("to ten zbujnik", data.joinOrCreateGame);
+        console.log("Game data:", data.joinOrCreateGame);
         navigate(`/games/${data.joinOrCreateGame.id}`);
       } else {
-        console.error("Invalid response structure");
+        console.error("Invalid response structure", data);
       }
     },
-    onError: (err) => console.error(err),
+    onError: (err) => console.error("GraphQL error:", err),
   });
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -84,4 +86,4 @@ function ObjectsList() {
   )
 }
 
-export default ObjectsList
+export default ObjectsList;

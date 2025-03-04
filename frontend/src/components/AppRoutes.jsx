@@ -7,8 +7,9 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/" element={<ObjectsList />} />
-      <Route path="games/:id" element={<Games />} />
+      <Route path="ObjectsList/" element={ <ObjectsList /> } />
+      <Route path="/" element={ <LoginPage/> } />
+      <Route path="games/:id" element={ <Games /> } />
     </Routes>
   )
 }

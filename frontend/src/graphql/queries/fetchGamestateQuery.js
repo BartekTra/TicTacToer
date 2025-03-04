@@ -12,6 +12,7 @@ export const FETCH_GAMESTATE = gql`
         player2
         player2guid
         winner
+        movecounter
     }
   }
 `

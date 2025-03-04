@@ -13,10 +13,11 @@ function Games() {
   const [gamestate, setGamestate] = useState([]);
   const [handleMoveQuery] = useMutation(HANDLE_MOVE); // Hook useMutation musi być zawsze wywołany w tej samej kolejności
   const wsRef = useRef(null);
-
   const { data: data2, loading, error } = useQuery(FETCH_GAMESTATE, {
     variables: { id: id },
   });
+
+
   useEffect(() => {
     
     if (data2) {
@@ -59,6 +60,7 @@ function Games() {
         console.log("Game update:", data.message);
         setGamestate(data.message);
       }
+      console.log(data);
     };
 
     // Cleanup: Zamknij WebSocket po opuszczeniu strony
