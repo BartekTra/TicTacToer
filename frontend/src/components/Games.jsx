@@ -56,11 +56,16 @@ function Games() {
       const data = JSON.parse(event.data);
       if (data.type === "ping") {
         console.log("Ping received");
-      } else if (data.type !== "welcome" && data.type !== "confirm_subscription") {
+      } else if (data.type !== "welcome" && data.type !== "confirm_subscription" && data.type !== "action") {
         console.log("Game update:", data.message);
-        setGamestate(data.message);
+        if(data.message !== "action: please :)"){
+          setGamestate(data.message);
+        }
+      } else if (data.type === "disconnect") {
+        console.log(data.type)
       }
       console.log(data);
+      console.log(data.type);
     };
 
     // Cleanup: Zamknij WebSocket po opuszczeniu strony
