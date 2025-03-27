@@ -2,81 +2,22 @@
 
 module Types
   class QueryType < Types::BaseObject
+    
+    # User dedicated queries
+    field :current_user, resolver: Queries::Users::CurrentUser
 
-    field :fetch_all_games, [Types::GameType], null: false, 
-    description: "Returns EVERY game instance state data" do
+    # Game dedicated queries
+    field :fetch_all_games, resolver: Queries::Game::FetchAllGames
+    field :fetch_gamestate, resolver: Queries::Game::FetchGamestate
+
+
+    field :fetch_test_game, [Types::GameType], null: false, description: "XD"
+
+
+    def fetch_test_game
+      ::Game.all
     end
+    
 
-    def fetch_all_games()
-      data = Game.all
-      data  
-    end
-
-    field :fetch_gamestate, Types::GameType, null: false, 
-    description: "Simply fetch gamestate of specific game" do
-      argument :id, ID, required: true
-    end
-
-    def fetch_gamestate(id:)
-      game = Game.find(id)
-      game
-    end
-
-    field :update_players_guid, Types::GameType, null: false, 
-    description: "Save player's guid based on which player slot is free" do
-      argument :playerGuid, String, required: true
-      argument :id, ID, required: true
-    end
-
-    def update_players_guid(playerGuid:, id:)
-      game = Game.find(id)
-      if game.player1guid == nil 
-        game.player1guid = playerGuid 
-      else
-        game.player2guid = playerGuid
-      end
-      game.save
-      game
-    end
-
-    field :join_or_create_game, Types::GameType, null: false, 
-    description: "Check if the newest created game, based on the date and time,
-    has free 2nd player slot and assign players guid to the 2nd slot or create 
-    new game instance if it's not free" do
-      argument :player, String, required: true
-      argument :realuuid, String, required: true
-    end
-
-    def join_or_create_game(player:, realuuid:)
-      tempGame = Game.order(created_at: :desc).first
-      if tempGame == nil || \
-        (tempGame.player2 != nil && \
-        realuuid != tempGame.player1guid && \
-        realuuid != tempGame.player2guid)
-
-        game = Game.create(
-          player1: player,
-          player2: nil,
-          player1guid: realuuid,
-          player2guid: nil,
-          currentturn: realuuid,
-          winner: nil,
-          count: 0,
-          board: "000999000",
-          movecounter: 0
-        )
-        game.save
-        return game
-      elsif realuuid == tempGame.player1guid 
-        tempGame.player1 = player
-      elsif realuuid == tempGame.player2guid
-        tempGame.player2 = player
-      else 
-        tempGame.player2 = player
-        tempGame.player2guid = realuuid
-      end
-      tempGame.save
-      tempGame
-    end
   end
 end

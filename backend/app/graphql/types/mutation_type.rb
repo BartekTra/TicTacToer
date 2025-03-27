@@ -2,24 +2,16 @@
 
 module Types
   class MutationType < Types::BaseObject
-    field :move, Types::GameType, null: false, 
-    description: "Update the gameboard based on which cell was clicked and which players' turn it is" do
-      argument :cell, Integer, required: true
-      argument :id, ID, required: true
-    end
+    
+    #User dedicated mutations fields
+    field :register_user, mutation: Mutations::Users::RegisterUser
+    field :login_user, mutation: Mutations::Users::LoginUser
+    field :logout_user, mutation: Mutations::Users::LogoutUser
+    
+    #Game Logic dedicated mutations fields
+    field :game_move, mutation: Mutations::Game::GameMove
+    field :join_game, mutation: Mutations::Game::JoinGame
+    field :add_player_into_game, mutation: Mutations::Game::AddPlayerIntoGame
 
-    def move(cell:, id:)
-      tempGame = Game.find(id)
-      if tempGame.currentturn == tempGame.player1guid 
-        tempGame.board[cell] = "O"
-        tempGame.currentturn = tempGame.player2guid 
-      else 
-        tempGame.board[cell] = "X"
-        tempGame.currentturn = tempGame.player1guid
-      end
-      tempGame.movecounter += 1
-      tempGame.save
-      tempGame
-    end
   end
 end

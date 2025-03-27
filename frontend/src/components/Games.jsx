@@ -6,6 +6,9 @@ import { FETCH_GAMESTATE } from "../graphql/queries/fetchGamestateQuery";
 import XsymbolImage from "../assets/X_symbol_tictactoer.png";
 import OsymbolImage from "../assets/O_symbol_tictactoer.png";
 import { useRef } from "react";
+import './Themes.css';
+
+
 function Games() {
   const { id } = useParams();
   const [guid, setGuid] = useState("");
