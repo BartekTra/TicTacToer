@@ -2,7 +2,7 @@
 
 class GraphqlController < ApplicationController
 
-  before_action :authenticate_user!, unless: :login_mutation?
+  before_action :authenticate_user!, unless: [:login_mutation?, :introspection_query?, :register_mutation?]
 
   def execute
     variables = prepare_variables(params[:variables])
@@ -18,7 +18,15 @@ class GraphqlController < ApplicationController
   private
 
   def login_mutation?
-    params[:query].to_s.include?("login") # Sprawdza, czy zapytanie zawiera 'login'
+    params[:query].to_s.include?("LoginUser") # Sprawdza, czy zapytanie zawiera 'login'
+  end
+
+  def introspection_query?
+    params[:query].to_s.include?("IntrospectionQuery")
+  end
+
+  def register_mutation?
+    params[:query].to_s.include?("RegisterUser")
   end
   
   def ensure_hash(variables)
