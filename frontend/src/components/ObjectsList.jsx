@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from 'uuid';
 import { isRequiredArgument } from "graphql";
 import XsymbolImage from "../assets/X_symbol_tictactoer.png";
 import { useQuery } from "@apollo/client";

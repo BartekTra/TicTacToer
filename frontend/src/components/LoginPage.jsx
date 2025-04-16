@@ -4,32 +4,31 @@ import { LOGIN_USER } from '../graphql/mutations/loginUser.js';
 import { loginSuccess } from '../store/authSlice';
 import { useMutation } from '@apollo/client';
 import { useDispatch } from 'react-redux';
-import axios from 'axios';
 import './Themes.css'
 
 
 function LoginPage(){
   const[email, setEmail] = useState("");
   const[password, setPassword] = useState("");
-  const[testtt, setTesttt] = useState(JSON.parse(localStorage.getItem("token")));
-  const test = testtt["access-token"]
   const[loginUser] = useMutation(LOGIN_USER);
   const dispatch = useDispatch();
-
-
+  const [test] = useState(JSON.parse(localStorage.getItem("token")));
+  const[test222, setTest222] = useState(JSON.stringify(test));
+  const test3 = test222;
+  console.log(test3);
+  
   const handleLogin = async(e) => {
     e.preventDefault();
     try {
-      const response = await loginUser({ variables: { email: email, password: password }})
+      const response = await loginUser({ 
+        variables: { email: email, password: password }
+      })
       console.log(response);
-      const token = response.data.loginUser.token;
-      console.log(token);
+      const token = JSON.parse(response.data.loginUser.token);
+      console.log("Token here 1: " + typeof token);
       if(token){
         dispatch(loginSuccess({user: { email }, token}));
-        axios.defaults.headers.common['access-token'] = token['access-token'];
-        console.log(axios.defaults.headers.common['access-token']);
-        axios.defaults.headers.common['client'] = token.client;
-        axios.defaults.headers.common['uid'] = token.uid;
+        console.log(token);
         alert('Zalogowano!');
       }
     } catch( err ){
@@ -43,8 +42,9 @@ function LoginPage(){
     
     <div className="bg-mybg h-screen w-screen flex flex-row justify-center items-center text-white">
       <div className='w-100 h-100 outline-1 outline-white space-y-40'>
-      <p> { testtt } </p>
+
         <div>
+        <p className='text-wrap break-all'> { test3 } </p>
           <form onSubmit={handleLogin} className='text-white flex flex-col items-center space-y-2 m-2'>
             <input type="text" placeholder='Email'
             className='

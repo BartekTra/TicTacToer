@@ -12,7 +12,7 @@ module Mutations
         
                 if user&.valid_password?(password)
                 token = user.create_new_auth_token
-                { token: token, errors: [] }
+                { token: token.to_json, errors: [] }
                 else
                 { token: nil, errors: ['Invalid credentials'] }
                 end

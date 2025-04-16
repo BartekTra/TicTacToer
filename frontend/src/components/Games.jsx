@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
 import { HANDLE_MOVE } from '../graphql/mutations/handleMoveMutation';
 import { FETCH_GAMESTATE } from "../graphql/queries/fetchGamestateQuery";
 import XsymbolImage from "../assets/X_symbol_tictactoer.png";
 import OsymbolImage from "../assets/O_symbol_tictactoer.png";
-import { useRef } from "react";
 import './Themes.css';
 
 
