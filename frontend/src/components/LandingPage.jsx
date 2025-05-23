@@ -5,24 +5,46 @@ import { preventUnhandledRejection } from "@apollo/client/utilities";
 import { useLazyQuery } from "@apollo/client";
 import { CHECK_AUTH } from "../graphql/queries/checkAuth";
 import { useUser } from '../context/UserContext';
+import { LOGIN_USER } from '../graphql/mutations/loginUser.js';
+import { useMutation } from '@apollo/client';
+import { loginSuccess } from '../store/authSlice';
 
 
 function LandingPage(){
+  const[loginUser] = useMutation(LOGIN_USER);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [dataTest, setDataTest] = useState();
   const [ checkAuth, { loading, error, data }]  = useLazyQuery(CHECK_AUTH);
   const { tempUser, loadingTempUser } = useUser();
-  const { realUser, setRealUser } = useState(null);
-
-  useEffect(() => {
-    async function testujeSe() {
-        const response = await useUser();
-        console.log(response);
-        setRealUser(response);
+  const { user, setUser } = useState("");
+  console.log(tempUser);
+  useEffect(()=> {
+    console.log(tempUser);
+    if(tempUser){
+      setUser(JSON.parse(tempUser));
+      console.log(user);
     }
-    testujeSe();
-  }, [])
+  },[])
+
+  const handleLoginTestButton = async(e) => {
+    e.preventDefault(); 
+    try {
+      const response = await loginUser({ 
+        variables: { email: "testuje@wp.pl", password: "12qwaszx" }
+      })
+      console.log(response);
+      const token = JSON.parse(response.data.loginUser.token);
+      console.log("Token here 1: " + typeof token);
+      if(token){
+        dispatch(loginSuccess({user: { email: "testuje@wp.pl" }, token}));
+        console.log(token);
+        alert('Zalogowano!');
+      }
+    } catch( err ){
+      console.error(err);
+    }
+  }
 
   const handleTestButton = async(e) => {
     e.preventDefault();
@@ -52,7 +74,7 @@ function LandingPage(){
     <div className='bg-mybg h-screen w-screen flex flex-row justify-center items-center text-white'>
       <div className="flex flex-col">
         <p> SiemaXD </p>
-        { <h2>Witaj, { realUser } !</h2>}
+        { <h2>Witaj,  !</h2>}
 
         <button onClick={ handleLoginButton } 
         className="bg-gray-600 active:bg-gray-800 w-15"
@@ -65,6 +87,11 @@ function LandingPage(){
         <button onClick={ handleTestButton } 
         className="bg-gray-600 active:bg-gray-800 w-15"
         > TEST </button>
+
+        <button onClick={ handleLoginTestButton } 
+        className="bg-gray-600 active:bg-gray-800 w-15"
+        > LoginDebugging </button>
+
 
       </div>
     </div>

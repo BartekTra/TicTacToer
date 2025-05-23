@@ -6,7 +6,7 @@ import { CHECK_AUTH } from "../graphql/queries/checkAuth";
 const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("");
   const [checkAuth, { data, loading, error }] = useLazyQuery(CHECK_AUTH, {
     fetchPolicy: 'network-only', // zawsze trafia do serwera, nie cache
   });
@@ -15,7 +15,9 @@ export const UserProvider = ({ children }) => {
     async function testujeTest() {
       const response = await checkAuth();
       console.log(response.data.currentUser.email);
-      setUser(JSON.stringify(response.data.currentUser));
+      console.log(JSON.stringify(response.data.currentUser));
+      const test = await JSON.stringify(response.data.currentUser);
+      setUser(test);
     }
     testujeTest();
   }, []);
