@@ -8,15 +8,17 @@ const httpLink = createHttpLink({
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('token');
-  const tokenParsed = JSON.parse(token);
+  if(token){
+    const tokenParsed = JSON.parse(token);
 
-  return {
-    headers: {
-      ...headers,
-      Authorization: tokenParsed['Authorization'].replace("Bearer ", ""),
-      client: tokenParsed['client'],
-      "access-token": tokenParsed['access-token'],
-      "token-type": tokenParsed['token-type'],
+    return {
+      headers: {
+        ...headers,
+        Authorization: tokenParsed['Authorization'].replace("Bearer ", ""),
+        client: tokenParsed['client'],
+        "access-token": tokenParsed['access-token'],
+        "token-type": tokenParsed['token-type'],
+      }
     }
   }
 });
@@ -26,12 +28,11 @@ const responseLink = new ApolloLink((operation, forward) => {
     const context = operation.getContext();
     const headers = context.response?.headers;
 
-    if (headers) {
-      const newAccessToken = headers.get("access-token");
-      console.log(newAccessToken);
-      if (newAccessToken) localStorage.setItem("AccessToken", newAccessToken);
-    }
 
+    const newAccessToken = headers.get("access-token");
+    console.log("apolloClient.js 33# " + newAccessToken);
+
+    if (newAccessToken) localStorage.setItem("AccessToken", newAccessToken);
     return response;
   });
 });

@@ -4,7 +4,7 @@ import { Provider, useSelector, useDispatch } from 'react-redux';
 import { preventUnhandledRejection } from "@apollo/client/utilities";
 import { useLazyQuery } from "@apollo/client";
 import { CHECK_AUTH } from "../graphql/queries/checkAuth";
-
+import { useUser } from '../context/UserContext';
 
 
 function LandingPage(){
@@ -12,11 +12,26 @@ function LandingPage(){
   const dispatch = useDispatch();
   const [dataTest, setDataTest] = useState();
   const [ checkAuth, { loading, error, data }]  = useLazyQuery(CHECK_AUTH);
+  const { tempUser, loadingTempUser } = useUser();
+  const { realUser, setRealUser } = useState(null);
+
+  useEffect(() => {
+    async function testujeSe() {
+        const response = await useUser();
+        console.log(response);
+        setRealUser(response);
+    }
+    testujeSe();
+  }, [])
 
   const handleTestButton = async(e) => {
     e.preventDefault();
-    await checkAuth({});
+    const response = await checkAuth({});
+    const test = await data;
+    console.log("response below");
+    console.log(response);
     console.log(loading);
+    console.log("lpage 21# " + test);
     console.log(data);
     console.log(error);
 
@@ -30,12 +45,14 @@ function LandingPage(){
     navigate("/register");
   }
 
+  if (loadingTempUser) return <p>Ładowanie...</p>;
+
   return(
     
     <div className='bg-mybg h-screen w-screen flex flex-row justify-center items-center text-white'>
       <div className="flex flex-col">
         <p> SiemaXD </p>
-        { <h2>Witaj,  !</h2>}
+        { <h2>Witaj, { realUser } !</h2>}
 
         <button onClick={ handleLoginButton } 
         className="bg-gray-600 active:bg-gray-800 w-15"

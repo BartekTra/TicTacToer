@@ -14,7 +14,7 @@ function RegisterPage(){
     try {
       const response = await registerUser({ variables: 
         { email: email, password: password, passwordConfirmation: passwordConfirmation }})
-      console.log(response);
+
       if(response.data.registerUser.errors === null){
         alert("Registration succesfull!");
       }

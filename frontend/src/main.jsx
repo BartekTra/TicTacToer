@@ -7,11 +7,11 @@ import store from './store/app/store.js'
 import { Provider } from 'react-redux'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  
       <ApolloProvider client={client}>
         <Provider store={store}>
           <App />
         </Provider>
       </ApolloProvider>
-  </StrictMode>
+  
 )

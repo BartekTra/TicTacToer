@@ -13,9 +13,6 @@ function LoginPage(){
   const[loginUser] = useMutation(LOGIN_USER);
   const dispatch = useDispatch();
   const [test] = useState(JSON.parse(localStorage.getItem("token")));
-  const[test222, setTest222] = useState(JSON.stringify(test));
-  const test3 = test222;
-  console.log(test3);
   
   const handleLogin = async(e) => {
     e.preventDefault();
@@ -44,7 +41,7 @@ function LoginPage(){
       <div className='w-100 h-100 outline-1 outline-white space-y-40'>
 
         <div>
-        <p className='text-wrap break-all'> { test3 } </p>
+        <p className='text-wrap break-all'> { JSON.stringify(test["uid"]) } </p>
           <form onSubmit={handleLogin} className='text-white flex flex-col items-center space-y-2 m-2'>
             <input type="text" placeholder='Email'
             className='
