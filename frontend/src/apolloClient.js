@@ -1,5 +1,5 @@
 // src/apolloClient.js
-import { ApolloClient, createHttpLink, InMemoryCache, ApolloLink } from '@apollo/client';
+import { ApolloClient, createHttpLink, InMemoryCache, ApolloLink, Observable } from '@apollo/client';
 import { setContext } from "@apollo/client/link/context";
 
 const httpLink = createHttpLink({
@@ -8,8 +8,12 @@ const httpLink = createHttpLink({
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('token');
+  console.log(token);
   if(token){
     const tokenParsed = JSON.parse(token);
+    console.log(tokenParsed);
+    console.log("client token", tokenParsed['client']);
+    console.log("Access token", tokenParsed['access-token']);
 
     return {
       headers: {
@@ -28,14 +32,18 @@ const responseLink = new ApolloLink((operation, forward) => {
     const context = operation.getContext();
     const headers = context.response?.headers;
 
-
-    const newAccessToken = headers.get("access-token");
-    console.log("apolloClient.js 33# " + newAccessToken);
+    async function testFunction() {
+      const newAccessToken = await headers.get("access-token");
+      console.log("apolloClient.js 33# ", newAccessToken);
+      return newAccessToken;
+    }
+    let newAccessToken = testFunction();
 
     if (newAccessToken) localStorage.setItem("AccessToken", newAccessToken);
     return response;
   });
 });
+
 
 const client = new ApolloClient({
   link: ApolloLink.from([

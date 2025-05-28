@@ -14,10 +14,13 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     async function testujeTest() {
       const response = await checkAuth();
-      console.log(response.data.currentUser.email);
-      console.log(JSON.stringify(response.data.currentUser));
-      const test = await JSON.stringify(response.data.currentUser);
-      setUser(test);
+      console.log(response);
+      if(response.data){
+        const test = await JSON.stringify(response.data.currentUser);
+        console.log(test);
+        setUser(test);
+
+      }
     }
     testujeTest();
   }, []);
