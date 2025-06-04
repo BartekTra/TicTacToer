@@ -12,8 +12,9 @@ const authLink = setContext((_, { headers }) => {
   if(token){
     const tokenParsed = JSON.parse(token);
     console.log(tokenParsed);
-    console.log("client token", tokenParsed['client']);
     console.log("Access token", tokenParsed['access-token']);
+    console.log("client token", tokenParsed['client']);
+
 
     return {
       headers: {
@@ -32,14 +33,15 @@ const responseLink = new ApolloLink((operation, forward) => {
     const context = operation.getContext();
     const headers = context.response?.headers;
 
-    async function testFunction() {
-      const newAccessToken = await headers.get("access-token");
-      console.log("apolloClient.js 33# ", newAccessToken);
-      return newAccessToken;
+    if(headers.get("access-token")){
+      console.log("Doing!");
+      const tokenLocalStorage = localStorage.getItem("token");
+      const tokenLocalStorageParsed = JSON.parse(tokenLocalStorage);
+      tokenLocalStorageParsed["access-token"] = headers.get("access-token");
+      console.log(JSON.stringify(tokenLocalStorageParsed));
+      localStorage.setItem("token", JSON.stringify(tokenLocalStorageParsed));
     }
-    let newAccessToken = testFunction();
 
-    if (newAccessToken) localStorage.setItem("AccessToken", newAccessToken);
     return response;
   });
 });

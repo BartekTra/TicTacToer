@@ -8,7 +8,7 @@ const UserContext = createContext(null);
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState("");
   const [checkAuth, { data, loading, error }] = useLazyQuery(CHECK_AUTH, {
-    fetchPolicy: 'network-only', // zawsze trafia do serwera, nie cache
+    fetchPolicy: 'network-only', 
   });
 
   useEffect(() => {
@@ -29,10 +29,12 @@ export const UserProvider = ({ children }) => {
 
 
   return (
-    <UserContext.Provider value={{ user, loading, refetchUser: checkAuth }}>
+    <UserContext.Provider value={{ user, loading, refetchUser: checkAuth, setUser }}>
       {children}
     </UserContext.Provider>
   );
 };
 
 export const useUser = () => useContext(UserContext);
+
+
