@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const FETCH_ALL_GAMES=gql`
-  query fetchAllGames() {
-    fetchGamestate(id: $id) {
+  query FetchAllGames {
+    fetchAllGames {
         board
         count
         currentturn
@@ -12,6 +12,7 @@ export const FETCH_ALL_GAMES=gql`
         player2
         player2guid
         winner
+        movecounter
     }
   }
 `

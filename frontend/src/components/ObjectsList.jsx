@@ -1,30 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from 'uuid';
-import "./ObjectsList.css";
 import { isRequiredArgument } from "graphql";
 import XsymbolImage from "../assets/X_symbol_tictactoer.png";
 import { useQuery } from "@apollo/client";
 import { JOIN_OR_CREATE_GAME } from "../graphql/queries/joinOrCreateGame";
 import { useLazyQuery } from "@apollo/client";
-
+import './Themes.css';
 function ObjectsList() {
   const [buttons, setButtons] = useState([]);
   const [games, setGames] = useState([]);
   const [player, setPlayer] = useState("");
   const navigate = useNavigate();
   const [realuuid, setRealuuid] = useState("");
-  const [joinOrCreateGame, { loading, error }] = useLazyQuery(JOIN_OR_CREATE_GAME, {
+  
+  const [joinOrCreateGame, { data }] = useLazyQuery(JOIN_OR_CREATE_GAME, {
     onCompleted: (data) => {
       if (data?.joinOrCreateGame?.id) {
-        console.log("to ten zbujnik", data.joinOrCreateGame);
+        console.log("Game data:", data.joinOrCreateGame);
         navigate(`/games/${data.joinOrCreateGame.id}`);
       } else {
-        console.error("Invalid response structure");
+        console.error("Invalid response structure", data);
       }
     },
-    onError: (err) => console.error(err),
+    onError: (err) => console.error("GraphQL error:", err),
   });
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -84,4 +84,4 @@ function ObjectsList() {
   )
 }
 
-export default ObjectsList
+export default ObjectsList;

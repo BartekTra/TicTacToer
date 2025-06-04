@@ -1,33 +1,76 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { LOGIN_USER } from '../graphql/mutations/loginUser.js';
+
+import { loginSuccess } from '../store/authSlice';
+import { useMutation } from '@apollo/client';
+import { useDispatch } from 'react-redux';
+import './Themes.css'
+
 
 function LoginPage(){
-
-  const handleSignUp = async(event) => {
-    event.preventDefault();
-    
+  const[email, setEmail] = useState("");
+  const[password, setPassword] = useState("");
+  const[loginUser] = useMutation(LOGIN_USER);
+  const dispatch = useDispatch();
+  const [test] = useState(JSON.parse(localStorage.getItem("token")));
+  
+  const handleLogin = async(e) => {
+    e.preventDefault();
+    try {
+      const response = await loginUser({ 
+        variables: { email: email, password: password }
+      })
+      console.log(response);
+      const token = JSON.parse(response.data.loginUser.token);
+      console.log("Token here 1: " + typeof token);
+      if(token){
+        dispatch(loginSuccess({user: { email }, token}));
+        console.log(token);
+        alert('Zalogowano!');
+      }
+    } catch( err ){
+      console.error(err);
+    }
   }
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <h3 id="user" className="text-xl font-semibold mb-4"></h3>
-      
-      <form id="sign_up_form" onSubmit={handleSignUp} className="bg-white p-6 rounded-lg shadow-md w-80 mb-4">
-        <h2 className="text-lg font-bold mb-4">Sign Up</h2>
-        <input type="text" id="signup-email" placeholder="Email" className="w-full p-2 border border-gray-300 rounded mb-2" />
-        <input type="password" id="signup-password" placeholder="Password" className="w-full p-2 border border-gray-300 rounded mb-2" />
-        <input type="password" id="signup-password-confirm" placeholder="Confirm Password" className="w-full p-2 border border-gray-300 rounded mb-2" />
-        <button type="submit" id="Sign Up" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Submit</button>
-      </form>
-      
-      <form id="sign_in_form" className="bg-white p-6 rounded-lg shadow-md w-80 mb-4">
-        <h2 className="text-lg font-bold mb-4">Sign In</h2>
-        <input type="text" id="signin-email" placeholder="Email" className="w-full p-2 border border-gray-300 rounded mb-2" />
-        <input type="password" id="signin-password" placeholder="Password" className="w-full p-2 border border-gray-300 rounded mb-2" />
-        <button type="submit" id="Login" className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">Submit</button>
-      </form>
-      
-      <button id="sign_out" className="bg-red-500 text-white p-2 rounded hover:bg-red-600">Logout</button>
-    </div>
 
+
+
+  return (
+    
+    <div className="bg-mybg h-screen w-screen flex flex-row justify-center items-center text-white">
+      <div className='w-100 h-100 outline-1 outline-white space-y-40'>
+
+        <div>
+        <p className='text-wrap break-all'> { test["uid"] } </p>
+          <form onSubmit={handleLogin} className='text-white flex flex-col items-center space-y-2 m-2'>
+            <input type="text" placeholder='Email'
+            className='
+            peer outline-1 outline-white bg-myBg2 w-[50%]
+            placeholder:opacity-10 placeholder:text-mytext
+            placeholder:transition-opacity placeholder:duration-[500ms]
+            hover:placeholder:opacity-100 placeholder:p-2' 
+            onChange={(e) => setEmail(e.target.value)}/>
+            
+            <input type="text" 
+            className="
+            peer outline-1 outline-white bg-myBg2 w-[50%]
+            placeholder:opacity-10 placeholder:text-mytext
+            placeholder:transition-opacity placeholder:duration-[500ms]
+            hover:placeholder:opacity-100 placeholder:p-2" 
+            placeholder='Password'
+            onChange={(e) => setPassword(e.target.value)}/>  
+            <button type="submit"
+            className='outline-1 outline-white bg-myBg2 w-[50%] 
+            text-mytext/10 duration-[500ms] transition-colors text-left px-2
+            hover:text-mytext hover:duration-[500ms] hover:transition-colors'
+            > Log In </button>
+          </form>
+        </div>
+
+
+
+      </div>
+    </div>
   );
 
 }

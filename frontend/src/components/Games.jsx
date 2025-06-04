@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
 import { HANDLE_MOVE } from '../graphql/mutations/handleMoveMutation';
 import { FETCH_GAMESTATE } from "../graphql/queries/fetchGamestateQuery";
 import XsymbolImage from "../assets/X_symbol_tictactoer.png";
 import OsymbolImage from "../assets/O_symbol_tictactoer.png";
-import { useRef } from "react";
+import './Themes.css';
+
+
 function Games() {
   const { id } = useParams();
   const [guid, setGuid] = useState("");
@@ -13,10 +15,11 @@ function Games() {
   const [gamestate, setGamestate] = useState([]);
   const [handleMoveQuery] = useMutation(HANDLE_MOVE); // Hook useMutation musi być zawsze wywołany w tej samej kolejności
   const wsRef = useRef(null);
-
   const { data: data2, loading, error } = useQuery(FETCH_GAMESTATE, {
     variables: { id: id },
   });
+
+
   useEffect(() => {
     
     if (data2) {
@@ -55,10 +58,16 @@ function Games() {
       const data = JSON.parse(event.data);
       if (data.type === "ping") {
         console.log("Ping received");
-      } else if (data.type !== "welcome" && data.type !== "confirm_subscription") {
+      } else if (data.type !== "welcome" && data.type !== "confirm_subscription" && data.type !== "action") {
         console.log("Game update:", data.message);
-        setGamestate(data.message);
+        if(data.message !== "action: please :)"){
+          setGamestate(data.message);
+        }
+      } else if (data.type === "disconnect") {
+        console.log(data.type)
       }
+      console.log(data);
+      console.log(data.type);
     };
 
     // Cleanup: Zamknij WebSocket po opuszczeniu strony

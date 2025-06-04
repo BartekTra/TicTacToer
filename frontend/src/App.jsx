@@ -1,14 +1,18 @@
 import { useState } from 'react'
-import './App.css'
 import AppRoutes from './components/AppRoutes'
 import { Link, BrowserRouter as Router } from 'react-router-dom'
+import useAuth from './store/useAuth.js';
+import { UserProvider } from './context/UserContext';
+
 function App() {
-  const [count, setCount] = useState(0)
+  const { isAuthenticated } = useAuth();
 
   return (
     <Router>
       <div className="app">
-        <AppRoutes />
+        <UserProvider>
+          <AppRoutes />
+        </UserProvider>
       </div>
     </Router>
   )
