@@ -1,13 +1,13 @@
 // context/UserContext.tsx
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useLazyQuery, gql } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { CHECK_AUTH } from "../graphql/queries/checkAuth";
 
 const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState("");
-  const [checkAuth, { data, loading, error }] = useLazyQuery(CHECK_AUTH, {
+  const [checkAuth, { loading }] = useLazyQuery(CHECK_AUTH, {
     fetchPolicy: 'network-only', 
   });
 

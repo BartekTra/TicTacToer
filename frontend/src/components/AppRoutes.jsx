@@ -1,10 +1,8 @@
-import React from "react";
 import { Route, Routes } from "react-router-dom";
-import ObjectsList from "./ObjectsList.jsx";
-import Games from "./Games.jsx";
 import LoginPage from "./LoginPage.jsx";
 import RegisterPage from "./RegisterPage.jsx";
 import LandingPage from "./LandingPage.jsx";
+import GamePage from "./GamePage.jsx";
 function AppRoutes() {
 
   return (
@@ -12,8 +10,7 @@ function AppRoutes() {
       <Route path="/" element={ <LandingPage/> } />
       <Route path="/register" element={ <RegisterPage /> } />
       <Route path="/login" element={ <LoginPage /> } />
-      <Route path="ObjectsList/" element={ <ObjectsList /> } />
-      <Route path="games/:id" element={ <Games /> } />
+      <Route path="/game/:id" element={ <GamePage />} />
     </Routes>
   )
 }

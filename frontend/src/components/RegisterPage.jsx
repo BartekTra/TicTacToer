@@ -1,7 +1,6 @@
 import { REGISTER_USER } from '../graphql/mutations/registerUser.js';
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { useDispatch } from 'react-redux';
 
 function RegisterPage(){
   const[registerUser] = useMutation(REGISTER_USER);

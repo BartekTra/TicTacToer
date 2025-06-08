@@ -11,7 +11,6 @@ module Types
     #Game Logic dedicated mutations fields
     field :game_move, mutation: Mutations::Game::GameMove
     field :join_game, mutation: Mutations::Game::JoinGame
-    field :add_player_into_game, mutation: Mutations::Game::AddPlayerIntoGame
 
   end
 end

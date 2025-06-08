@@ -1,44 +1,37 @@
 module Mutations
   module Game
     class JoinGame < Mutations::BaseMutation
+      field :game, Types::GameType, null: false
+      field :message, String, null: false
 
-      type Types::GameType, null: false
+      def resolve
+        user = context[:current_user]
+        raise GraphQL::ExecutionError, "Brak autoryzacji" unless user
 
-      argument :player, String, required: true
-      argument :realuuid, String, required: true
+        existing_game = ::Game.where("player1_id = ? OR player2_id = ?", user.id, user.id)
+                              .where(winner: nil)
+                              .first
+        return { game: existing_game, message: "Już bierzesz udział w grze" } if existing_game
 
-      def resolve(player:, realuuid:)
-        tempGame = ::Game.order(created_at: :desc).first
-        if tempGame == nil || \
-          (tempGame.player2 != nil && \
-          realuuid != tempGame.player1guid && \
-          realuuid != tempGame.player2guid)
+        game = ::Game.where(player1_id: nil).or(::Game.where(player2_id: nil))
+                    .order(:created_at)
+                    .lock("FOR UPDATE") # zabezpieczenie przed race condition
+                    .first
 
-          game = ::Game.create(
-            player1: player,
-            player2: nil,
-            player1guid: realuuid,
-            player2guid: nil,
-            currentturn: realuuid,
-            winner: nil,
-            count: 0,
-            board: "000999000",
-            movecounter: 0
-          )
-          game.save
-          return game
-        elsif realuuid == tempGame.player1guid 
-          tempGame.player1 = player
-        elsif realuuid == tempGame.player2guid
-          tempGame.player2 = player
-        else 
-          tempGame.player2 = player
-          tempGame.player2guid = realuuid
+        if game
+          if game.player1_id.nil?
+            game.update!(player1_id: user.id)
+          elsif game.player2_id.nil?
+            game.update!(player2_id: user.id)
+          end
+          message = "Dołączono do istniejącej gry"
+        else
+          game = ::Game.create!(player1_id: user.id)
+          message = "Utworzono nową grę"
         end
-        tempGame.save
-        tempGame
-      end
 
+        { game: game, message: message }
+      end
     end
   end
 end

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { LOGIN_USER } from '../graphql/mutations/loginUser.js';
 
 import { loginSuccess } from '../store/authSlice';

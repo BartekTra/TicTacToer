@@ -2,9 +2,17 @@ import { gql } from '@apollo/client';
 
 
 export const HANDLE_MOVE = gql`
-  mutation Move($cell: Int!, $id: ID!) {
-    move(cell: $cell, id: $id) {
-      board
+  mutation gameMove($cell: Int!, $id: ID!) {
+    gameMove(cell: $cell, id: $id) {
+        count
+        createdAt
+        currentturn
+        id
+        movecounter
+        player1Id
+        player2Id
+        updatedAt
+        winner
     }
   }
 `;

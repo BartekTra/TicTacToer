@@ -1,20 +1,28 @@
 class Game < ApplicationRecord
+  belongs_to :player1, class_name: 'User', optional: true
+  belongs_to :player2, class_name: 'User', optional: true
+  validate :players_must_be_different
+  
   after_update_commit do
     check_winner
     broadcast_game
     check_game_status
   end
-  
+
   after_create_commit { broadcast_game }
+
+  WIN_COMBINATIONS = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
+  ]
 
   def broadcast_game
     ActionCable.server.broadcast("GamesChannel_#{id}", {
       id: id,
       board: board,
-      player1: player1,
-      player2: player2,
-      player1guid: player1guid,
-      player2guid: player2guid,
+      player1_id: player1_id,
+      player2_id: player2_id,
       currentturn: currentturn,
       winner: winner,
       count: count,
@@ -22,30 +30,39 @@ class Game < ApplicationRecord
     })
   end
 
-  WIN_COMBINATIONS = [
-    [ 0, 1, 2 ], [ 3, 4, 5 ], [ 6, 7, 8 ],
-    [ 0, 3, 6 ], [ 1, 4, 7 ], [ 2, 5, 8 ],
-    [ 0, 4, 8 ], [ 2, 4, 6 ]
-  ]
-
   def check_winner
+    return if board.nil? || board.length < 9
+
     WIN_COMBINATIONS.each do |combo|
-      if (board[combo[0]] == board[combo[1]] && board[combo[1]] == board[combo[2]]) && (board[combo[0]] != "0" && board[combo[0]] != "9") 
-        if winner == nil
-          update(winner: board[combo[0]] == "O" ? player1guid : player2guid)
+      a, b, c = combo.map { |i| board[i] }
+      next if [a, b, c].any? { |v| v == "0" || v == "9" }
+      if a == b && b == c
+        if winner.nil?
+          winning_player = case a
+                           when "O" then player1_id
+                           when "X" then player2_id
+                           end
+          update(winner: winning_player)
         end
       end
     end
-    if (movecounter == 9 && winner == nil)
+
+    if movecounter == 9 && winner.nil?
       update(winner: "draw")
-    end 
+    end
     nil
   end
 
   def check_game_status
-    if winner != nil
-      ActionCable.server.broadcast("GamesChannel_#{id}", { action: "please :)" })
-      GameCleanupJob.set(wait: 5.seconds).perform_later(id)
+    return if winner.nil?
+
+    ActionCable.server.broadcast("GamesChannel_#{id}", { action: "please :)" })
+    GameCleanupJob.set(wait: 5.seconds).perform_later(id)
+  end
+
+  def players_must_be_different
+    if player1_id.present? && player1_id == player2_id
+      errors.add(:base, "player1 i player2 nie mogą być tym samym użytkownikiem")
     end
   end
 end

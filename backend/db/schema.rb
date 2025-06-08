@@ -10,35 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_17_171754) do
+ActiveRecord::Schema[7.2].define(version: 2025_06_07_214211) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "buttons", force: :cascade do |t|
-    t.integer "count"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "games", force: :cascade do |t|
     t.string "board"
-    t.string "player1"
-    t.string "player2"
     t.string "currentturn"
     t.string "winner"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "count"
-    t.string "player1guid"
-    t.string "player2guid"
     t.integer "movecounter"
-  end
-
-  create_table "posts", force: :cascade do |t|
-    t.string "title"
-    t.text "content"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.bigint "player1_id"
+    t.bigint "player2_id"
+    t.index ["player1_id"], name: "index_games_on_player1_id"
+    t.index ["player2_id"], name: "index_games_on_player2_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -65,4 +52,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_17_171754) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
+
+  add_foreign_key "games", "users", column: "player1_id"
+  add_foreign_key "games", "users", column: "player2_id"
 end

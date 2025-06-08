@@ -1,8 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { Axios } from 'axios';
+
+const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 
 const initialState = {
-  user: localStorage.getItem('user') || null,
-  token: localStorage.getItem('token') || null,
+  user: isBrowser ? localStorage.getItem('user') : null,
+  token: isBrowser ? localStorage.getItem('token') : null,
 };
 
 const authSlice = createSlice({
