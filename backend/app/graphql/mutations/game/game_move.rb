@@ -13,26 +13,40 @@ module Mutations
         game = ::Game.find(id)
         raise GraphQL::ExecutionError, "Gra nie znaleziona" unless game
 
-        # Sprawdź, czy użytkownik bierze udział w grze
+        # Czy użytkownik gra w tej grze?
         unless [game.player1_id, game.player2_id].include?(user.id)
           raise GraphQL::ExecutionError, "Nie bierzesz udziału w tej grze"
         end
 
-        # Sprawdź, czy ruch należy do tego użytkownika
-        expected_turn = game.player1_id == user.id ? "O" : "X"
-        unless game.currentturn == expected_turn
+        # Czy to jego tura?
+        unless game.currentturn_id == user.id
           raise GraphQL::ExecutionError, "To nie jest Twoja kolej"
         end
 
-        # Sprawdź, czy komórka jest pusta
-        if game.board[cell] != "0"
-          raise GraphQL::ExecutionError, "To pole jest już zajęte"
+        # Czy pole jest wolne?
+        board = game.board.chars
+        raise GraphQL::ExecutionError, "To pole jest już zajęte" if board[cell] == "O" or board[cell] == "X"
+
+        # Gra nadal trwa (brak zwycięscy, brak remisu)
+        unless game.winner == nil
+          raise GraphQL::ExecutionError, "Gra już się zakończyła"
         end
 
-        # Wykonaj ruch
-        game.board[cell] = expected_turn
-        game.currentturn = expected_turn == "O" ? "X" : "O"
-        game.movecounter += 1
+        # Czy drugi gracz jest obecny?
+        unless game.player1 != nil && game.player2 != nil
+          raise GraphQL::ExecutionError, "Poczekaj na drugiego gracza"
+        end
+
+        # Wstaw symbol gracza (player1 => O, player2 => X)
+        mark = user.id == game.player1_id ? "O" : "X"
+        board[cell] = mark
+        game.board = board.join
+
+        # Zmień turę na przeciwnika
+        next_turn_id = user.id == game.player1_id ? game.player2_id : game.player1_id
+        game.currentturn_id = next_turn_id
+
+        game.movecounter = game.movecounter.to_i + 1
 
         game.save!
         game

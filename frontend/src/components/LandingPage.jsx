@@ -21,17 +21,6 @@ function LandingPage() {
 
   const { user, loading: loadingUser, setUser } = useUser();
 
-  useEffect(() => {
-    // Sprawdź użytkownika po załadowaniu
-    if (!loadingUser && !user) {
-      checkAuth().then(res => {
-        if (res?.data?.currentUser) {
-          setUser(res.data.currentUser);
-        }
-      }).catch(console.error);
-    }
-  }, [loadingUser, user, checkAuth, setUser]);
-
   const handleLoginTestButton = async (e) => {
     e.preventDefault();
     try {
@@ -50,7 +39,7 @@ function LandingPage() {
     
       if (token && currentUser) {
         dispatch(loginSuccess({ user: currentUser, token }));
-        setUser(currentUser);
+        setUser(currentUser.email);
         alert("Zalogowano!");
       }
       const tempTest = JSON.parse(response.data.loginUser.token)
@@ -99,15 +88,19 @@ function LandingPage() {
 
   if (!user) {
     return (
-      <button onClick={handleLoginTestButton} className="bg-gray-600 active:bg-gray-800 w-15">
-        LoginDebugging
-      </button>
+      <div>
+        <button onClick={handleLoginTestButton} className="bg-gray-600 active:bg-gray-800 w-15">
+          LoginDebugging
+        </button>
+      </div>
     );
   }
 
   return (
     <div className='bg-mybg h-screen w-screen flex flex-row justify-center items-center text-white'>
       <div className="flex flex-col items-center space-y-2">
+
+        <p>{user}</p>
 
         <button onClick={handleTestButton} className="bg-gray-600 active:bg-gray-800 w-15">
           TEST

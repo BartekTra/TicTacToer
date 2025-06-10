@@ -1,6 +1,9 @@
 class Game < ApplicationRecord
   belongs_to :player1, class_name: 'User', optional: true
   belongs_to :player2, class_name: 'User', optional: true
+  belongs_to :currentturn, class_name: 'User', optional: true
+  belongs_to :winner, class_name: 'User', optional: true
+
   validate :players_must_be_different
   
   after_update_commit do
@@ -21,11 +24,10 @@ class Game < ApplicationRecord
     ActionCable.server.broadcast("GamesChannel_#{id}", {
       id: id,
       board: board,
-      player1_id: player1_id,
+      player1: player1,
       player2_id: player2_id,
       currentturn: currentturn,
       winner: winner,
-      count: count,
       movecounter: movecounter
     })
   end
@@ -36,22 +38,19 @@ class Game < ApplicationRecord
     WIN_COMBINATIONS.each do |combo|
       a, b, c = combo.map { |i| board[i] }
       next if [a, b, c].any? { |v| v == "0" || v == "9" }
-      if a == b && b == c
-        if winner.nil?
-          winning_player = case a
-                           when "O" then player1_id
-                           when "X" then player2_id
-                           end
-          update(winner: winning_player)
-        end
+
+      if a == b && b == c && winner.nil?
+        winning_player = movecounter.odd? ? player1 : player2
+        update(winner: winning_player)
+        return
       end
     end
 
     if movecounter == 9 && winner.nil?
-      update(winner: "draw")
+      update(winner: nil) # możesz też ustawić np. specjalny `draw` flag
     end
-    nil
   end
+
 
   def check_game_status
     return if winner.nil?

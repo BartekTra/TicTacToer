@@ -26,7 +26,12 @@ module Mutations
           end
           message = "Dołączono do istniejącej gry"
         else
-          game = ::Game.create!(player1_id: user.id)
+          game = ::Game.create!(
+            player1_id: user.id,
+            board: "123456789",
+            currentturn_id: user.id,
+            movecounter: 1,
+            )
           message = "Utworzono nową grę"
         end
 

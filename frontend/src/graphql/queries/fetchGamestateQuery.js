@@ -3,16 +3,15 @@ import { gql } from '@apollo/client';
 export const FETCH_GAMESTATE = gql`
   query fetchGamestate($id: ID!) {
     fetchGamestate(id: $id) {
-        board
-        count
+        createdAt
         currentturn
         id
-        player1
-        player1guid
-        player2
-        player2guid
-        winner
         movecounter
+        player1
+        player2
+        updatedAt
+        winner
+        board
     }
   }
 `

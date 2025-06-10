@@ -10,22 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_06_07_214211) do
+ActiveRecord::Schema[7.2].define(version: 2025_06_10_013251) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "games", force: :cascade do |t|
     t.string "board"
-    t.string "currentturn"
-    t.string "winner"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "count"
     t.integer "movecounter"
     t.bigint "player1_id"
     t.bigint "player2_id"
+    t.bigint "currentturn_id"
+    t.bigint "winner_id"
+    t.index ["currentturn_id"], name: "index_games_on_currentturn_id"
     t.index ["player1_id"], name: "index_games_on_player1_id"
     t.index ["player2_id"], name: "index_games_on_player2_id"
+    t.index ["winner_id"], name: "index_games_on_winner_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -53,6 +54,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_06_07_214211) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "games", "users", column: "currentturn_id"
   add_foreign_key "games", "users", column: "player1_id"
   add_foreign_key "games", "users", column: "player2_id"
+  add_foreign_key "games", "users", column: "winner_id"
 end

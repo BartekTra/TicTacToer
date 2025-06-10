@@ -4,7 +4,6 @@ import { gql } from '@apollo/client';
 export const HANDLE_MOVE = gql`
   mutation gameMove($cell: Int!, $id: ID!) {
     gameMove(cell: $cell, id: $id) {
-        count
         createdAt
         currentturn
         id

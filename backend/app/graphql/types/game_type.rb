@@ -5,8 +5,8 @@ module Types
     field :player2_id, ID, null: true
     field :currentturn, String, null: true
     field :winner, String, null: true
-    field :count, Integer, null: true
     field :movecounter, Integer, null: true
+    field :board, String, null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
   end

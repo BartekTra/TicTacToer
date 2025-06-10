@@ -5,7 +5,6 @@ export const JOIN_GAME = gql`
       joinGame {
           message
           game {
-              count
               createdAt
               currentturn
               id
