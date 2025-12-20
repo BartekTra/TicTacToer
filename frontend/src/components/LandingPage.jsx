@@ -18,14 +18,13 @@ function LandingPage(){
   const [ checkAuth, { loading, error, data }]  = useLazyQuery(CHECK_AUTH);
   const { tempUser, loadingTempUser } = useUser();
   const { user, setUser } = useState("");
-  console.log(tempUser);
   useEffect(()=> {
     console.log(tempUser);
     if(tempUser){
       setUser(JSON.parse(tempUser));
       console.log(user);
     }
-  },[])
+  },[tempUser])
 
   const handleLoginTestButton = async(e) => {
     e.preventDefault(); 
