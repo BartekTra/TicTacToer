@@ -13,36 +13,29 @@ module Mutations
         game = ::Game.find(id)
         raise GraphQL::ExecutionError, "Gra nie znaleziona" unless game
 
-        # Czy użytkownik gra w tej grze?
         unless [game.player1_id, game.player2_id].include?(user.id)
           raise GraphQL::ExecutionError, "Nie bierzesz udziału w tej grze"
         end
 
-        # Czy to jego tura?
         unless game.currentturn_id == user.id
           raise GraphQL::ExecutionError, "To nie jest Twoja kolej"
         end
 
-        # Czy pole jest wolne?
         board = game.board.chars
         raise GraphQL::ExecutionError, "To pole jest już zajęte" if board[cell] == "O" or board[cell] == "X"
 
-        # Gra nadal trwa (brak zwycięscy, brak remisu)
         unless game.winner == nil
           raise GraphQL::ExecutionError, "Gra już się zakończyła"
         end
 
-        # Czy drugi gracz jest obecny?
         unless game.player1 != nil && game.player2 != nil
           raise GraphQL::ExecutionError, "Poczekaj na drugiego gracza"
         end
 
-        # Wstaw symbol gracza (player1 => O, player2 => X)
         mark = user.id == game.player1_id ? "O" : "X"
         board[cell] = mark
         game.board = board.join
 
-        # Zmień turę na przeciwnika
         next_turn_id = user.id == game.player1_id ? game.player2_id : game.player1_id
         game.currentturn_id = next_turn_id
 
