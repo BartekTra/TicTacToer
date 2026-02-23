@@ -1,21 +1,24 @@
 import { REGISTER_USER } from '../graphql/mutations/registerUser.js';
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 
 function RegisterPage(){
   const[registerUser] = useMutation(REGISTER_USER);
   const[email, setEmail] = useState("");
   const[password, setPassword] = useState("");
   const[passwordConfirmation, setPasswordConfirmation] = useState("");
+  const navigate = useNavigate();
   
   const handleRegister = async(e) => {
     e.preventDefault();
     try {
       const response = await registerUser({ variables: 
         { email: email, password: password, passwordConfirmation: passwordConfirmation }})
-
-      if(response.data.registerUser.errors === null){
+      console.log('wykonano', response)
+      if(response.data.registerUser.errors.length == 0){
         alert("Registration succesfull!");
+        navigate("/login");
       }
     } catch ( err ){
       console.error(err);

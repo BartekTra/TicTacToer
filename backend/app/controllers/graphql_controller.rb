@@ -1,24 +1,41 @@
 # frozen_string_literal: true
 
 class GraphqlController < ApplicationController
-
+  include ActionController::Cookies
+  include DeviseTokenAuth::Concerns::SetUserByToken
+  
+  before_action :set_user_by_cookie
   before_action :authenticate_user!, unless: [:login_mutation?, :introspection_query?, :register_mutation?]
+
+
 
   def execute
     variables = prepare_variables(params[:variables])
     query = params[:query]
     operation_name = params[:operationName]
     context = {
-      current_user: current_user
+      current_user: current_user,
+      cookies: cookies
     }
     result = TestbuttonSchema.execute(query, variables: ensure_hash(variables), context: context, operation_name: operation_name)
     render json: result
   end
+  
+  def set_user_by_cookie
+    if cookies.signed[:auth_headers]
+      auth_headers = JSON.parse(cookies.signed[:auth_headers])
+      request.headers['access-token'] = auth_headers['access-token']
+      request.headers['client'] = auth_headers['client']
+      request.headers['uid'] = auth_headers['uid']
+    end
+  end
 
+
+  
   private
 
   def login_mutation?
-    params[:query].to_s.include?("LoginUser") # Sprawdza, czy zapytanie zawiera 'login'
+    params[:query].to_s.include?("LoginUser")
   end
 
   def introspection_query?

@@ -1,45 +1,44 @@
 // context/UserContext.tsx
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useLazyQuery } from '@apollo/client';
+import { createContext, useContext, useState, useEffect } from "react";
+import { useLazyQuery } from "@apollo/client";
 import { CHECK_AUTH } from "../graphql/queries/checkAuth";
-import { useNavigate } from 'react-router-dom';
-
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../store/authSlice";
 const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState("");
   const [checkAuth, { loading }] = useLazyQuery(CHECK_AUTH, {
-    fetchPolicy: 'network-only', 
+    fetchPolicy: "network-only",
   });
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const location = useLocation();
   useEffect(() => {
-    async function testujeTest() {
-      const response = await checkAuth();
-      console.log(response);
-      if(response.data){
-        const test = await JSON.stringify(response.data.currentUser.email);
-        console.log(test);
-        setUser(test);
+    async function fetchUser() {
+      try {
+        const response = await checkAuth();
+        const user = response.data.currentUser;
+        dispatch(loginSuccess({ user: user }));
         navigate("/");
-      }
-      if(!response.data);{
-        navigate("/login");
+      } catch (error) {
+        console.error(error);
+        {
+          location.pathname !== "/register" && navigate("/login");
+        }
       }
     }
-    testujeTest();
+    fetchUser();
   }, []);
 
-
-
-
   return (
-    <UserContext.Provider value={{ user, loading, refetchUser: checkAuth, setUser }}>
+    <UserContext.Provider
+      value={{ user, loading, refetchUser: checkAuth, setUser }}
+    >
       {children}
     </UserContext.Provider>
   );
 };
 
 export const useUser = () => useContext(UserContext);
-
-

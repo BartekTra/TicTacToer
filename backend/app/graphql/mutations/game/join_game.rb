@@ -15,7 +15,7 @@ module Mutations
 
         game = ::Game.where(player1_id: nil).or(::Game.where(player2_id: nil))
                     .order(:created_at)
-                    .lock("FOR UPDATE") # zabezpieczenie przed race condition
+                    .lock("FOR UPDATE")
                     .first
 
         if game
@@ -34,7 +34,6 @@ module Mutations
             )
           message = "Utworzono nową grę"
         end
-
         { game: game, message: message }
       end
     end

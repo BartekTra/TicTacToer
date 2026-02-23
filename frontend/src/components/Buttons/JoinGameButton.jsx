@@ -1,13 +1,10 @@
 import React from 'react';
 
-export const JoinGameButton = ({ label, onClickButton, type = 'button', className = '' }) => {
-
-  const baseStyles =
-    'bg-gray-600 active:bg-gray-800'
+export const JoinGameButton = ({ label, onClickButton, type = 'button' }) => {
 
 
   return (
-    <button type={type} onClick={onClickButton} className={`${baseStyles} ${className}`}>
+    <button type={type} onClick={onClickButton} className={'bg-gray-600 active:bg-gray-800 rounded-xl p-2'}>
       {label}
     </button>
   );
