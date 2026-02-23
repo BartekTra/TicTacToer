@@ -12,7 +12,7 @@ DeviseTokenAuth.setup do |config|
   config.cookie_attributes = {
     httponly: true,
     secure: Rails.env.production?,
-    samesite: :lax,
+    samesite: Rails.env.production? ? :none : :lax,
     domain: :all
   }
 

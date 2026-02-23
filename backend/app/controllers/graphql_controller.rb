@@ -3,11 +3,7 @@
 class GraphqlController < ApplicationController
   include ActionController::Cookies
   include DeviseTokenAuth::Concerns::SetUserByToken
-  
-  before_action :set_user_by_cookie
   before_action :authenticate_user!, unless: [:login_mutation?, :introspection_query?, :register_mutation?]
-
-
 
   def execute
     variables = prepare_variables(params[:variables])
@@ -20,17 +16,6 @@ class GraphqlController < ApplicationController
     result = TestbuttonSchema.execute(query, variables: ensure_hash(variables), context: context, operation_name: operation_name)
     render json: result
   end
-  
-  def set_user_by_cookie
-    if cookies.signed[:auth_headers]
-      auth_headers = JSON.parse(cookies.signed[:auth_headers])
-      request.headers['access-token'] = auth_headers['access-token']
-      request.headers['client'] = auth_headers['client']
-      request.headers['uid'] = auth_headers['uid']
-    end
-  end
-
-
   
   private
 
