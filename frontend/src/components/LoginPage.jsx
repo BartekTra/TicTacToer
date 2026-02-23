@@ -88,7 +88,7 @@ function LoginPage() {
               Zaloguj się{" "}
             </button>
             <button
-              onClick={navigate("/register")}
+              onClick={() => navigate("/register")}
               className="outline-1 outline-white bg-myBg2 w-[50%] 
             text-mytext/10 duration-[500ms] transition-colors text-left px-2
             hover:text-mytext hover:duration-[500ms] hover:transition-colors hover:bg-gray-700"
