@@ -14,12 +14,17 @@ module Mutations
                 if user&.valid_password?(password)
                     auth_headers = user.create_new_auth_token
           
-                    context[:cookies].signed["auth_cookie"] = {
-                        value: auth_headers.to_json,
-                        httponly: true,
-                        secure: Rails.env.production?,
-                        same_site: :none 
-                    }
+                    context[:cookies]["auth_cookie"] = {
+                                value: {
+                                'access-token' => token['access-token'],
+                                'client' => token['client'],
+                                'uid' => token['uid']
+                                }.to_json,
+                                httponly: true,
+                                secure: Rails.env.production?,
+                                same_site: Rails.env.production? ? :none : :lax,
+                                expires: 2.weeks.from_now
+                            }
                     { user: user, success: true, errors: []}
                 else
                     { user: nil, success: false, errors: ['Invalid credentials'] }
