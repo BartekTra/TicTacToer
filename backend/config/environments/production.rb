@@ -34,13 +34,16 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Mount Action Cable outside main process or domain.
-  # config.action_cable.mount_path = nil
+  config.action_cable.mount_path = '/cable'
   # config.action_cable.url = ENV.fetch('BACKEND_CABLE_URL', 'wss://localhost:3000/cable')
-  config.action_cable.disable_request_forgery_protection = true
+  #config.action_cable.disable_request_forgery_protection = true
+  config.action_cable.allowed_request_origins = [ /.*/ ]
+
+  config.action_dispatch.trusted_proxies = %w(10.0.0.0/8 172.16.0.0/12 192.168.0.0/16).map { |proxy| IPAddr.new(proxy) }
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
-  # config.assume_ssl = true
+  config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = false
