@@ -19,6 +19,7 @@ export const UserProvider = ({ children }) => {
     async function fetchUser() {
       try {
         const response = await checkAuth();
+        console.log("UserContext 22", response);
         const user = response.data.currentUser;
         dispatch(loginSuccess({ user: user }));
         navigate("/");

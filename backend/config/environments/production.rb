@@ -34,8 +34,8 @@ Rails.application.configure do
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
-  config.action_cable.url = "wss://react-rails-tictactoe.onrender.com/cable"
-  config.action_cable.allowed_request_origins = [ "https://react-rails-tictactoe.onrender.com", "https://react-rails-tictactoe-1.onrender.com", "http://127.0.0.1:5173", "http://localhost:5173"]
+  config.action_cable.url = ENV.fetch('BACKEND_CABLE_URL', 'wss://localhost:3000/cable')
+  config.action_cable.allowed_request_origins = [ ENV.fetch('BACKEND_CABLE_ALLOWED_ORIGINS_URL', 'https://localhost:5173')]
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
