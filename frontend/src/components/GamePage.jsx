@@ -31,7 +31,7 @@ function GamePage() {
   useEffect(() => {
     if (!gameId) return;
 
-    const cable = createConsumer("ws://localhost:3000/cable");
+    const cable = createConsumer(import.meta.env.VITE_BACKEND_WEBSOCKET_URL);
     cableRef.current = cable;
 
     const subscription = cable.subscriptions.create(
