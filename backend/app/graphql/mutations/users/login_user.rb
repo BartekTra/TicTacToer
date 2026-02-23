@@ -12,7 +12,7 @@ module Mutations
                 user = User.find_by(email: email)
         
                 if user&.valid_password?(password)
-                    auth_headers = user.create_new_auth_token
+                    token = user.create_new_auth_token
           
                     context[:cookies]["auth_cookie"] = {
                                 value: {
