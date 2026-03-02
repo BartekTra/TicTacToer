@@ -7,11 +7,10 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins ENV.fetch('FRONTEND_URL', 'http://localhost:5173')
+    origins "https://d20g1m0wom82jt.cloudfront.net"
 
      resource "*",
        headers: :any,
-       expose: ['access-token', 'expiry', 'token-type', 'uid', 'client'],
        methods: [:get, :post, :put, :patch, :delete, :options, :head],
        credentials: true
   end
