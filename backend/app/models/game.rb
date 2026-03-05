@@ -14,11 +14,7 @@ class Game < ApplicationRecord
 
   after_create_commit { broadcast_game }
 
-  WIN_COMBINATIONS = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-    [0, 4, 8], [2, 4, 6]
-  ]
+
 
   def broadcast_game
     ActionCable.server.broadcast("GamesChannel_#{id}", {
@@ -31,24 +27,53 @@ class Game < ApplicationRecord
       movecounter: movecounter
     })
   end
+  
+  WIN_COMBINATIONS = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
+  ]
 
   def check_winner
-    return if board.nil? || board.length < 9
+    return unless valid_board?
 
     WIN_COMBINATIONS.each do |combo|
-      a, b, c = combo.map { |i| board[i] }
-      next if [a, b, c].any? { |v| v == "0" || v == "9" }
+      next unless winning_combo?(combo)
 
-      if a == b && b == c && winner.nil?
-        winning_player = movecounter.odd? ? player1 : player2
-        update(winner: winning_player)
-        return
-      end
+      assign_winner(current_player)
+      return
     end
 
-    if movecounter == 9 && winner.nil?
-      update(winner: nil) # możesz też ustawić np. specjalny `draw` flag
-    end
+    declare_draw if board_full? && winner.nil?
+  end
+
+  private
+
+  def valid_board?
+    board.present? && board.length >= 9
+  end
+
+  def winning_combo?(combo)
+    values = combo.map { |i| board[i] }
+    return false if values.any? { |v| v.in?(%w[0 9]) }
+
+    values.uniq.one?
+  end
+
+  def current_player
+    movecounter.odd? ? player1 : player2
+  end
+
+  def assign_winner(player)
+    update(winner: player) if winner.nil?
+  end
+
+  def board_full?
+    movecounter == 9
+  end
+
+  def declare_draw
+    update(winner: nil)
   end
 
 

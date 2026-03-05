@@ -13,8 +13,8 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: testingveryuser
-  password: 12qwaszx
+  username: Rails.application.credentials.dig(:database, :default, :username)
+  password: Rails.application.credentials.dig(:database, :default, :password)
   host: localhost
 
 development:
@@ -31,9 +31,9 @@ production:
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   host: localhost
-  username: postgres
-  password: strongDatabasePassword
-  database: tictactoer_production
+  username: Rails.application.credentials.dig(:database, :production, :username)
+  password: Rails.application.credentials.dig(:database, :production, :password)
+  database: Rails.application.credentials.dig(:database, :production, :database)
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is

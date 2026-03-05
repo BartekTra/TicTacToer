@@ -39,8 +39,8 @@ Rails.application.configure do
   # config.action_cable.disable_request_forgery_protection = true
 
   # config.action_dispatch.trusted_proxies = %w(10.0.0.0/8 172.16.0.0/12 192.168.0.0/16).map { |proxy| IPAddr.new(proxy) }
-  config.action_cable.allowed_request_origins = [ 'https://d20g1m0wom82jt.cloudfront.net', /https?:\/\/tictactoer\.duckdns\.org.*/ ]
-  config.hosts << "tictactoer.duckdns.org"
+  config.action_cable.allowed_request_origins = rails.application.credentials.dig(:rails, :cable_allowed_request_origin)
+  config.hosts << rails.application.credentials.dig(:rails, :config_hosts)
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
   config.assume_ssl = true
