@@ -49,7 +49,7 @@ module Games
         raise ValidationError, "To nie jest Twoja kolej"
       end
 
-      if game.board.chars[@cell].in?(%w[O X])
+      if game.board.chars[@cell].in?(["O", "X"])
         raise ValidationError, "To pole jest już zajęte"
       end
 
