@@ -6,13 +6,11 @@ class Game < ApplicationRecord
 
   validate :players_must_be_different
   
-  after_update_commit do
-    check_winner
-    broadcast_game
-    check_game_status
-  end
+  after_create_commit :broadcast_game
+  after_update_commit :broadcast_game
+  after_update_commit :handle_finished_game, if: -> { winner_id.present? }
 
-  after_create_commit { broadcast_game }
+  private
 
   def broadcast_game
     ActionCable.server.broadcast("GamesChannel_#{id}", {
@@ -26,57 +24,7 @@ class Game < ApplicationRecord
     })
   end
 
-  private
-  
-  WIN_COMBINATIONS = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-    [0, 4, 8], [2, 4, 6]
-  ]
-
-  def check_winner
-    return unless valid_board?
-
-    WIN_COMBINATIONS.each do |combo|
-      next unless winning_combo?(combo)
-
-      assign_winner(current_player)
-      return
-    end
-
-    declare_draw if board_full? && winner.nil?
-  end
-
-  def winning_combo?(combo)
-    values = combo.map { |i| board[i] }
-
-    values.uniq.one? && values.first.in?(%w[X O])
-  end
-
-  def valid_board?
-    board.present? && board.length >= 9
-  end
-
-  def current_player
-    movecounter.odd? ? player1 : player2
-  end
-
-  def assign_winner(player)
-    update(winner: player) if winner.nil?
-  end
-
-  def board_full?
-    movecounter == 9
-  end
-
-  def declare_draw
-    update(winner: nil)
-  end
-
-
-  def check_game_status
-    return if winner.nil?
-
+  def handle_finished_game
     ActionCable.server.broadcast("GamesChannel_#{id}", { action: "please :)" })
     GameCleanupJob.set(wait: 5.seconds).perform_later(id)
   end
