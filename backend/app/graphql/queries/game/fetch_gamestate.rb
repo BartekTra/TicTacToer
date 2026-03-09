@@ -7,7 +7,6 @@ module Queries
       def resolve(id:)
         ::Game.find(id)
       end
-
     end
   end
 end

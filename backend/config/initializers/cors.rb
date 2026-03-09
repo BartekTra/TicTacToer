@@ -7,7 +7,7 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "https://d20g1m0wom82jt.cloudfront.net"
+    origins Rails.application.credentials.dig(:cors, :origins_allowed)
 
      resource "*",
        headers: :any,

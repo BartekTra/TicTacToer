@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_06_10_013251) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_09_163148) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -18,7 +18,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_06_10_013251) do
     t.string "board"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "movecounter"
+    t.integer "movecounter", default: 0
     t.bigint "player1_id"
     t.bigint "player2_id"
     t.bigint "currentturn_id"
