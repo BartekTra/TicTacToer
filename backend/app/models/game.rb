@@ -14,8 +14,6 @@ class Game < ApplicationRecord
 
   after_create_commit { broadcast_game }
 
-
-
   def broadcast_game
     ActionCable.server.broadcast("GamesChannel_#{id}", {
       id: id,
@@ -27,6 +25,8 @@ class Game < ApplicationRecord
       movecounter: movecounter
     })
   end
+
+  private
   
   WIN_COMBINATIONS = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -47,17 +47,14 @@ class Game < ApplicationRecord
     declare_draw if board_full? && winner.nil?
   end
 
-  private
+  def winning_combo?(combo)
+    values = combo.map { |i| board[i] }
+
+    values.uniq.one? && values.first.in?(%w[X O])
+  end
 
   def valid_board?
     board.present? && board.length >= 9
-  end
-
-  def winning_combo?(combo)
-    values = combo.map { |i| board[i] }
-    return false if values.any? { |v| v.in?(%w[0 9]) }
-
-    values.uniq.one?
   end
 
   def current_player
