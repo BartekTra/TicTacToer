@@ -3,5 +3,4 @@ export interface User {
   email: string;
   display_name: string;
   nickname: string;
-  avatar_url: string;
 }
