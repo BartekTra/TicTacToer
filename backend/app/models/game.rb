@@ -1,4 +1,6 @@
 class Game < ApplicationRecord
+  validates :game_mode, inclusion: { in: [ "classic", "infinite" ] }
+
   belongs_to :player1, class_name: 'User', optional: true
   belongs_to :player2, class_name: 'User', optional: true
   belongs_to :currentturn, class_name: 'User', optional: true

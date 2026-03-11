@@ -4,7 +4,7 @@ module Mutations
       argument :cell, Integer, required: true
       argument :id, ID, required: true
 
-      type Types::GameType, null: false
+      type Types::GameTypes::GameType, null: false
 
       def resolve(cell:, id:)
         user = context[:current_user]

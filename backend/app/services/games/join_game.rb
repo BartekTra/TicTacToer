@@ -1,6 +1,7 @@
 module Games
   class JoinGame
-    def initialize(user:)
+    def initialize(user:, game_mode:)
+      @game_mode = game_mode
       @user = user
     end
 
@@ -32,6 +33,7 @@ module Games
         board: "123456789",
         currentturn_id: @user.id,
         movecounter: 1,
+        game_mode: @game_mode
         )
 
       { game: game, message: "Utworzono nową grę" }
@@ -48,10 +50,12 @@ module Games
     end
 
     def find_game_with_empty_slot
-      ::Game.where(player1_id: nil).or(::Game.where(player2_id: nil))
-                  .order(:created_at)
-                  .lock("FOR UPDATE")
-                  .first
+      ::Game.where(game_mode: @game_mode)
+            .where(player1_id: nil)
+            .or(::Game.where(player2_id: nil))
+            .order(:created_at)
+            .lock("FOR UPDATE")
+            .first
     end
   end
 end
