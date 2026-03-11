@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_09_163148) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_11_134349) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,10 +19,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_09_163148) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "movecounter", default: 0
-    t.bigint "player1_id"
-    t.bigint "player2_id"
     t.bigint "currentturn_id"
     t.bigint "winner_id"
+    t.string "game_mode", default: "classic"
+    t.jsonb "moves_history", default: []
+    t.bigint "player1_id"
+    t.bigint "player2_id"
     t.index ["currentturn_id"], name: "index_games_on_currentturn_id"
     t.index ["player1_id"], name: "index_games_on_player1_id"
     t.index ["player2_id"], name: "index_games_on_player2_id"

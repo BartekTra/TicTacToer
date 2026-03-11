@@ -6,7 +6,7 @@ module Mutations
         
             field :success, Boolean, null: false
             field :errors, [String], null: false
-            field :user, Types::UserType, null: true
+            field :user, Types::UserTypes::UserType, null: true
 
             def resolve(email:, password:)
                 user = User.find_by(email: email)
