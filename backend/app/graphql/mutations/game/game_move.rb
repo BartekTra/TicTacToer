@@ -1,6 +1,7 @@
 module Mutations
   module Game
     class GameMove < Mutations::BaseMutation
+      class ValidationError < StandardError; end
       argument :cell, Integer, required: true
       argument :id, ID, required: true
 
