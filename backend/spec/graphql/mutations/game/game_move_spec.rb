@@ -1,74 +1,68 @@
 require 'rails_helper'
 
 RSpec.describe Mutations::Game::GameMove do
-  let(:player1) { create(:user) }
-  let(:player2) { create(:user) }
-  let(:game) do 
-    create(:game, 
-      player1: player1, 
-      player2: player2, 
-      currentturn_id: player1.id, 
-      board: "012345678", 
-      movecounter: 0,
-      winner: nil
-    )
-  end
-
-  let(:current_user) { player1 }
+  let(:user) { create(:user) }
+  let(:game) { create(:game) }
   let(:cell) { 4 }
-
+  
+  let(:context) { { current_user: user } }
+  
   subject(:resolve_mutation) do
     mutation = described_class.allocate 
-    
-    allow(mutation).to receive(:context).and_return({ current_user: current_user })
-    
+    allow(mutation).to receive(:context).and_return(context)
     mutation.resolve(cell: cell, id: game.id)
   end
 
-  context 'Happy Path - Poprawny ruch' do
-    it 'aktualizuje planszę, zmienia turę i zwiększa licznik ruchów' do
-      result = resolve_mutation
-      
-      expect(result.board[4]).to eq("O")
-      expect(result.currentturn_id).to eq(player2.id)
-      expect(result.movecounter).to eq(1)
-    end
-  end
+  let(:make_move_instance) { instance_double('Games::MakeMove') }
 
-  context 'Sad Path - Przypadki brzegowe i błędy' do
+  describe '#resolve' do
     context 'kiedy użytkownik nie jest zalogowany' do
-      let(:current_user) { nil } 
+      let(:context) { { current_user: nil } }
 
       it 'zwraca błąd autoryzacji' do
         expect { resolve_mutation }.to raise_error(GraphQL::ExecutionError, "Brak autoryzacji")
       end
     end
 
-    context 'kiedy to nie jest kolej gracza' do
-      let(:current_user) { player2 } 
-
-      it 'zwraca błąd tury' do
-        expect { resolve_mutation }.to raise_error(GraphQL::ExecutionError, "To nie jest Twoja kolej")
-      end
-    end
-
-    context 'kiedy pole jest już zajęte' do
+    context 'kiedy użytkownik jest zalogowany' do
       before do
-        game.update!(board: "0123X5678")
+        allow(Games::MakeMove).to receive(:new)
+          .with(user: user, game_id: game.id, cell: cell)
+          .and_return(make_move_instance)
       end
 
-      it 'zwraca błąd zajętego pola' do
-        expect { resolve_mutation }.to raise_error(GraphQL::ExecutionError, "To pole jest już zajęte")
+      context 'Happy Path - Poprawny ruch' do
+        it 'wywołuje serwis Games::MakeMove i zwraca zaktualizowaną grę' do
+          expect(make_move_instance).to receive(:call).and_return(game)
+          
+          result = resolve_mutation
+          
+          expect(result).to eq(game)
+        end
       end
-    end
 
-    context 'kiedy gra się już zakończyła' do
-      before do
-        game.update!(winner: player2)
-      end
+      context 'Sad Path - Błędy serwisu i bazy' do
+        context 'kiedy gra nie istnieje' do
+          before do
+            allow(make_move_instance).to receive(:call).and_raise(ActiveRecord::RecordNotFound)
+          end
 
-      it 'zwraca błąd zakończonej gry' do
-        expect { resolve_mutation }.to raise_error(GraphQL::ExecutionError, "Gra już się zakończyła")
+          it 'zwraca GraphQL::ExecutionError z komunikatem "Gra nie znaleziona"' do
+            expect { resolve_mutation }.to raise_error(GraphQL::ExecutionError, "Gra nie znaleziona")
+          end
+        end
+
+        context 'kiedy ruch jest niedozwolony (zwraca ValidationError z serwisu)' do
+          before do
+            stub_const("Games::MakeMove::ValidationError", Class.new(StandardError))
+            allow(make_move_instance).to receive(:call)
+              .and_raise(Games::MakeMove::ValidationError.new("To pole jest już zajęte"))
+          end
+
+          it 'przekazuje błąd serwisu jako błąd GraphQL' do
+            expect { resolve_mutation }.to raise_error(GraphQL::ExecutionError, "To pole jest już zajęte")
+          end
+        end
       end
     end
   end
