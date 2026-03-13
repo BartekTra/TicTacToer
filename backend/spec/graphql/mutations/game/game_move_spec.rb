@@ -13,8 +13,6 @@ RSpec.describe Mutations::Game::GameMove do
     mutation.resolve(cell: cell, id: game.id)
   end
 
-  let(:make_move_instance) { instance_double('Games::MakeMove') }
-
   describe '#resolve' do
     context 'kiedy użytkownik nie jest zalogowany' do
       let(:context) { { current_user: nil } }
@@ -25,15 +23,11 @@ RSpec.describe Mutations::Game::GameMove do
     end
 
     context 'kiedy użytkownik jest zalogowany' do
-      before do
-        allow(Games::MakeMove).to receive(:new)
-          .with(user: user, game_id: game.id, cell: cell)
-          .and_return(make_move_instance)
-      end
-
       context 'Happy Path - Poprawny ruch' do
         it 'wywołuje serwis Games::MakeMove i zwraca zaktualizowaną grę' do
-          expect(make_move_instance).to receive(:call).and_return(game)
+          expect(Games::MakeMove).to receive(:call)
+            .with(user: user, game_id: game.id, cell: cell)
+            .and_return(game)
           
           result = resolve_mutation
           
@@ -44,7 +38,9 @@ RSpec.describe Mutations::Game::GameMove do
       context 'Sad Path - Błędy serwisu i bazy' do
         context 'kiedy gra nie istnieje' do
           before do
-            allow(make_move_instance).to receive(:call).and_raise(ActiveRecord::RecordNotFound)
+            allow(Games::MakeMove).to receive(:call)
+              .with(user: user, game_id: game.id, cell: cell)
+              .and_raise(ActiveRecord::RecordNotFound)
           end
 
           it 'zwraca GraphQL::ExecutionError z komunikatem "Gra nie znaleziona"' do
@@ -54,8 +50,8 @@ RSpec.describe Mutations::Game::GameMove do
 
         context 'kiedy ruch jest niedozwolony (zwraca ValidationError z serwisu)' do
           before do
-            stub_const("Games::MakeMove::ValidationError", Class.new(StandardError))
-            allow(make_move_instance).to receive(:call)
+            allow(Games::MakeMove).to receive(:call)
+              .with(user: user, game_id: game.id, cell: cell)
               .and_raise(Games::MakeMove::ValidationError.new("To pole jest już zajęte"))
           end
 
