@@ -8,8 +8,7 @@ class Game < ApplicationRecord
 
   validate :players_must_be_different
   
-  after_create_commit :broadcast_game
-  after_update_commit :broadcast_game
+  after_commit :broadcast_game, on: [:create, :update]
   after_update_commit :handle_finished_game, if: -> { winner_id.present? }
 
   private
@@ -22,7 +21,8 @@ class Game < ApplicationRecord
       player2_id: player2_id,
       currentturn: currentturn,
       winner: winner,
-      movecounter: movecounter
+      movecounter: movecounter,
+      game_mode: game_mode
     })
   end
 

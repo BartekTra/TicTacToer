@@ -1,7 +1,7 @@
 module Queries
   module Game
     class FetchAllGames < Queries::BaseQuery
-      type [Types::GameType], null: false
+      type [Types::GameTypes::GameType], null: false
 
       def resolve()
         ::Game.all
