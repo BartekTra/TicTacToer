@@ -73,7 +73,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: backend
         
     services:
       mysql:
@@ -100,7 +100,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          working-directory: ./backend
+          working-directory: backend
           ruby-version: .ruby-version
           bundler-cache: true
 
