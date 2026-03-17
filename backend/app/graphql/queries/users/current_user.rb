@@ -6,6 +6,7 @@ module Queries
         context[:current_user]
       end
       #test
+      ##test 2 to check github actions
     end
   end
 end
