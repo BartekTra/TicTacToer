@@ -7,6 +7,7 @@ module Queries
       end
       # test
       # #test 2 to check github actions
+      # next test for gh actions
     end
   end
 end
