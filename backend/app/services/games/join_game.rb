@@ -51,8 +51,7 @@ module Games
 
     def find_game_with_empty_slot
       ::Game.where(game_mode: @game_mode)
-            .where(player1_id: nil)
-            .or(::Game.where(player2_id: nil))
+            .where("player1_id IS NULL OR player2_id IS NULL")
             .order(:created_at)
             .lock("FOR UPDATE")
             .first

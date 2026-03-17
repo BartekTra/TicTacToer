@@ -3,15 +3,21 @@ module Mutations
     class GameMove < Mutations::BaseMutation
       
       argument :cell, Integer, required: true
-      argument :id, ID, required: true
 
-      type Types::GameTypes::GameType, null: false
+      field :success, Boolean, null: false
+      field :message, String, null: false
 
-      def resolve(cell:, id:)
+      def resolve(cell:)
         user = context[:current_user]
         raise GraphQL::ExecutionError, "Brak autoryzacji" unless user
-        Games::MakeMove.call(user: user, game_id: id, cell: cell)
         
+        Games::MakeMove.call(user: user, cell: cell)
+        
+        { 
+          success: true, 
+          message: "Pomyślnie wykonano ruch w grze o id: #{id}" 
+        }
+
       rescue ActiveRecord::RecordNotFound
         raise GraphQL::ExecutionError, "Gra nie znaleziona"
       rescue Games::MakeMove::ValidationError => e

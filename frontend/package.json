@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@apollo/client": "^4.1.6",
+    "@rails/actioncable": "^8.1.200",
     "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/vite": "^4.2.1",
     "graphql": "^16.13.1",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
+    "@types/rails__actioncable": "^8.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react-swc": "^4.2.2",

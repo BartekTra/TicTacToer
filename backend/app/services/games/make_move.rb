@@ -2,8 +2,8 @@
 module Games
   class MakeMove
     class ValidationError < StandardError; end
-    def self.call(user:, game_id:, cell:)
-      game = ::Game.find(game_id)
+    def self.call(user:, cell:)
+      game = user.games_as_player1 ? user.games_as_player1 : user.games_as_player2
       
       strategy_class = case game.game_mode
                        when "infinite" then Modes::Infinite

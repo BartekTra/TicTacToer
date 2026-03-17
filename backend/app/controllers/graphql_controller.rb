@@ -3,7 +3,7 @@
 class GraphqlController < ApplicationController
   include ActionController::Cookies
   include DeviseTokenAuth::Concerns::SetUserByToken
-  before_action :authenticate_user!, unless: [:login_mutation?, :introspection_query?, :register_mutation?]
+  before_action :check_authentication
 
   def execute
     variables = prepare_variables(params[:variables])
@@ -19,12 +19,20 @@ class GraphqlController < ApplicationController
   
   private
 
+  def check_authentication
+    return if introspection_query?
+    return if register_mutation?
+    return if login_mutation?
+    
+    authenticate_user!
+  end
+
   def login_mutation?
     params[:query].to_s.include?("LoginUser")
   end
 
   def introspection_query?
-    params[:query].to_s.include?("IntrospectionQuery")
+    params[:query].to_s.include?("__schema") || params[:operationName] == "IntrospectionQuery"
   end
 
   def register_mutation?
