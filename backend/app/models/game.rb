@@ -13,20 +13,21 @@ class Game < ApplicationRecord
   after_update_commit :handle_finished_game, if: -> { winner_id.present? }
   after_commit :schedule_turn_timeout, on: [:create, :update]
 
-  private
 
   def broadcast_game
     ActionCable.server.broadcast("GamesChannel_#{id}", {
       id: id,
       board: board,
       player1: player1,
-      player2_id: player2_id,
+      player2: player2,
       currentturn: currentturn,
       winner: winner,
       movecounter: movecounter,
       game_mode: game_mode
     })
   end
+
+  private
 
   def handle_finished_game
     ActionCable.server.broadcast("GamesChannel_#{id}", { action: "please :)" })
