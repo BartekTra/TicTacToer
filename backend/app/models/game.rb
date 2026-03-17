@@ -1,17 +1,17 @@
 class Game < ApplicationRecord
   validates :game_mode, inclusion: { in: [ "classic", "infinite" ] }
 
-  belongs_to :player1, class_name: 'User', optional: true
-  belongs_to :player2, class_name: 'User', optional: true
-  belongs_to :currentturn, class_name: 'User', optional: true
-  belongs_to :winner, class_name: 'User', optional: true
+  belongs_to :player1, class_name: "User", optional: true
+  belongs_to :player2, class_name: "User", optional: true
+  belongs_to :currentturn, class_name: "User", optional: true
+  belongs_to :winner, class_name: "User", optional: true
 
   validate :players_must_be_different
   validate :players_cannot_be_in_multiple_games
-  
-  after_commit :broadcast_game, on: [:create, :update]
+
+  after_commit :broadcast_game, on: [ :create, :update ]
   after_update_commit :handle_finished_game, if: -> { winner_id.present? }
-  after_commit :schedule_turn_timeout, on: [:create, :update]
+  after_commit :schedule_turn_timeout, on: [ :create, :update ]
 
 
   def broadcast_game

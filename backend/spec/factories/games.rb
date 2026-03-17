@@ -4,4 +4,3 @@ FactoryBot.define do
     movecounter { 0 }
   end
 end
-

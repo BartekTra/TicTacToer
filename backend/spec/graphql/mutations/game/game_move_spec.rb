@@ -4,11 +4,11 @@ RSpec.describe Mutations::Game::GameMove do
   let(:user) { create(:user) }
   let(:game) { create(:game) }
   let(:cell) { 4 }
-  
+
   let(:context) { { current_user: user } }
-  
+
   subject(:resolve_mutation) do
-    mutation = described_class.allocate 
+    mutation = described_class.allocate
     allow(mutation).to receive(:context).and_return(context)
     mutation.resolve(cell: cell, id: game.id)
   end
@@ -28,9 +28,9 @@ RSpec.describe Mutations::Game::GameMove do
           expect(Games::MakeMove).to receive(:call)
             .with(user: user, game_id: game.id, cell: cell)
             .and_return(game)
-          
+
           result = resolve_mutation
-          
+
           expect(result).to eq(game)
         end
       end

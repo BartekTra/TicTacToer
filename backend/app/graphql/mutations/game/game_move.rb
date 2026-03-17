@@ -1,7 +1,6 @@
 module Mutations
   module Game
     class GameMove < Mutations::BaseMutation
-      
       argument :cell, Integer, required: true
 
       field :success, Boolean, null: false
@@ -10,12 +9,12 @@ module Mutations
       def resolve(cell:)
         user = context[:current_user]
         raise GraphQL::ExecutionError, "Brak autoryzacji" unless user
-        
+
         Games::MakeMove.call(user: user, cell: cell)
-        
-        { 
-          success: true, 
-          message: "Pomyślnie wykonano ruch w grze" 
+
+        {
+          success: true,
+          message: "Pomyślnie wykonano ruch w grze"
         }
 
       rescue ActiveRecord::RecordNotFound

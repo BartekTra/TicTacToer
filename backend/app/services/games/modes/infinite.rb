@@ -13,9 +13,9 @@ module Games
         end
 
         board_array[@cell] = @mark
-        new_history = history + [@cell]
+        new_history = history + [ @cell ]
 
-        [board_array, new_history]
+        [ board_array, new_history ]
       end
 
       def determine_winner(board_array, _movecounter)

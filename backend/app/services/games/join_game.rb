@@ -8,7 +8,7 @@ module Games
     def call
       existing_game = find_users_active_games
       if existing_game
-          return { game: existing_game, message: "Już bierzesz udział w grze" } 
+          return { game: existing_game, message: "Już bierzesz udział w grze" }
       end
 
       game = find_game_with_empty_slot

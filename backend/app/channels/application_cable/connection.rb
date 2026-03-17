@@ -2,10 +2,10 @@ module ApplicationCable
   class Connection < ActionCable::Connection::Base
     # =begin
     # identified_by :current_user
-    
+
     # def connect
     #   self.current_user = find_verified_user
-      
+
     #   # Jeśli chcesz, by aplikacja całkowicie blokowała gości (niezalogowanych) do WebSocketów,
     #   # odkomentuj poniższą linijkę. Jeśli goście mogą patrzeć na mecze - zostaw zakomentowane.
     #   # reject_unauthorized_connection unless current_user
@@ -23,7 +23,7 @@ module ApplicationCable
     #       token = token_data['access-token']
 
     #       user = User.find_by(uid: uid)
-          
+
     #       # Weryfikujemy, czy token z ciasteczka pokrywa się z bazą danych
     #       if user && user.valid_token?(token, client_id)
     #         return user

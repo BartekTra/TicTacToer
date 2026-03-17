@@ -10,7 +10,6 @@ module Mutations
       rescue StandardError => e
         GraphQL::ExecutionError.new("Logout failed: #{e.message}")
       end
-      
     end
   end
 end

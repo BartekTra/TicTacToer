@@ -4,7 +4,5 @@ FactoryBot.define do
     password { "haslo123" }
     sequence(:name) { |n| "GraczNumer#{n}" }
     sequence(:nickname) { |n| "nick_gracza_#{n}" }
-    
   end
 end
-

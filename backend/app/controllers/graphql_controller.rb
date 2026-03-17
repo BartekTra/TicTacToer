@@ -16,14 +16,14 @@ class GraphqlController < ApplicationController
     result = TestbuttonSchema.execute(query, variables: ensure_hash(variables), context: context, operation_name: operation_name)
     render json: result
   end
-  
+
   private
 
   def check_authentication
     return if introspection_query?
     return if register_mutation?
     return if login_mutation?
-    
+
     authenticate_user!
   end
 
@@ -38,7 +38,7 @@ class GraphqlController < ApplicationController
   def register_mutation?
     params[:query].to_s.include?("RegisterUser")
   end
-  
+
   def ensure_hash(variables)
     variables.is_a?(String) ? JSON.parse(variables) : variables
   rescue JSON::ParserError
@@ -69,6 +69,6 @@ class GraphqlController < ApplicationController
     logger.error e.message
     logger.error e.backtrace.join("\n")
 
-    render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: 500
+    render json: { errors: [ { message: e.message, backtrace: e.backtrace } ], data: {} }, status: 500
   end
 end
