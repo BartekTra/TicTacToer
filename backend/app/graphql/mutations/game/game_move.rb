@@ -15,7 +15,7 @@ module Mutations
         
         { 
           success: true, 
-          message: "Pomyślnie wykonano ruch w grze o id: #{id}" 
+          message: "Pomyślnie wykonano ruch w grze" 
         }
 
       rescue ActiveRecord::RecordNotFound

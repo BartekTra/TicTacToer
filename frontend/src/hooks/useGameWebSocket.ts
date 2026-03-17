@@ -9,8 +9,6 @@ import {
 import { type GameData } from "../types/GameData";
 import { type User } from "../types/User";
 
-logger.enabled = true;
-
 interface UseGameWebSocketReturn {
   gameData: GameData | null;
   gameBoard: string | null;

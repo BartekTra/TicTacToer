@@ -20,7 +20,7 @@ const UserContext = ({ children }: UserContextProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isAuthPage = location.pathname === "/login" || location.pathname === "/register"
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
 
   const { data, loading, error } = useQuery<CurrentUserResponse>(CURRENT_USER, {
     fetchPolicy: 'network-only', 
@@ -31,12 +31,15 @@ const UserContext = ({ children }: UserContextProps) => {
 
     if (data?.currentUser) {
       dispatch(setCredentials(data.currentUser));
-    }
-
-    const hasError = error || (data && !data.currentUser);
-    
-    if (hasError && !isAuthPage) {
-      navigate("/login");
+      if (isAuthPage) {
+        navigate("/");
+      }
+    } else {
+      const hasError = error || (data && !data.currentUser);
+      
+      if (hasError && !isAuthPage) {
+        navigate("/login");
+      }
     }
   }, [data, loading, error, isAuthPage, dispatch, navigate]);
 

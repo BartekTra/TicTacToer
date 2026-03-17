@@ -10,13 +10,13 @@ import { useGameWebSocket } from "../../hooks/useGameWebSocket";
 const GamePage: React.FC = () => {
   const { id: gameId } = useParams<{ id: string }>();
   const user = useAppSelector((state) => state.counter.value);
-  console.log(user);
 
   const { gameData, gameBoard, currentTurn, winner, countdown } =
     useGameWebSocket(gameId);
 
   const [handleMoveMutation] = useMutation(HANDLE_MOVE, {
     fetchPolicy: "network-only",
+    onError: ((err) => console.log(err))
   });
 
   useEffect(() => {
