@@ -4,11 +4,14 @@ on:
   pull_request:
   push:
     branches: [ main ]
-
+    paths:
+      - 'backend/**'
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -24,7 +27,11 @@ jobs:
 
   scan_js:
     runs-on: ubuntu-latest
-
+    
+    defaults:
+      run:
+        working-directory: ./backend
+        
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -40,6 +47,11 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./backend
+        
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -55,7 +67,11 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-
+    
+    defaults:
+      run:
+        working-directory: ./backend
+        
     services:
       mysql:
         image: mysql
