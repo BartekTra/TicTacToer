@@ -114,4 +114,4 @@ jobs:
           FRONTEND_URL: "http://localhost:3000"
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         working-directory: backend
-        run: bin/rails db:test:prepare test && bundle exec rspec
+        run: bin/rails db:test:prepare && bundle exec rspec
