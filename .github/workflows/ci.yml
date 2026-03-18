@@ -72,13 +72,19 @@ jobs:
     runs-on: ubuntu-latest
         
     services:
-      mysql:
-        image: mysql
+      postgres:
+        image: postgres:14
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test_db
         ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
       # redis:
       #   image: redis
@@ -103,7 +109,7 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-          DATABASE_URL: mysql2://127.0.0.1:3306
+          DATABASE_URL: postgres://postgres:password@localhost:5432/test_db
           # REDIS_URL: redis://localhost:6379/0
           FRONTEND_URL: "http://localhost:3000"
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
