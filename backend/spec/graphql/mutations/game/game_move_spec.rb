@@ -10,7 +10,7 @@ RSpec.describe Mutations::Game::GameMove do
   subject(:resolve_mutation) do
     mutation = described_class.allocate
     allow(mutation).to receive(:context).and_return(context)
-    mutation.resolve(cell: cell, id: game.id)
+    mutation.resolve(cell: cell)
   end
 
   describe '#resolve' do
@@ -26,12 +26,12 @@ RSpec.describe Mutations::Game::GameMove do
       context 'Happy Path - Poprawny ruch' do
         it 'wywołuje serwis Games::MakeMove i zwraca zaktualizowaną grę' do
           expect(Games::MakeMove).to receive(:call)
-            .with(user: user, game_id: game.id, cell: cell)
+            .with(user: user, cell: cell)
             .and_return(game)
 
           result = resolve_mutation
 
-          expect(result).to eq(game)
+          expect(result).to eq({message: "Pomyślnie wykonano ruch w grze", success: true})
         end
       end
 
@@ -39,7 +39,7 @@ RSpec.describe Mutations::Game::GameMove do
         context 'kiedy gra nie istnieje' do
           before do
             allow(Games::MakeMove).to receive(:call)
-              .with(user: user, game_id: game.id, cell: cell)
+              .with(user: user, cell: cell)
               .and_raise(ActiveRecord::RecordNotFound)
           end
 
@@ -51,7 +51,7 @@ RSpec.describe Mutations::Game::GameMove do
         context 'kiedy ruch jest niedozwolony (zwraca ValidationError z serwisu)' do
           before do
             allow(Games::MakeMove).to receive(:call)
-              .with(user: user, game_id: game.id, cell: cell)
+              .with(user: user, cell: cell)
               .and_raise(Games::MakeMove::ValidationError.new("To pole jest już zajęte"))
           end
 
