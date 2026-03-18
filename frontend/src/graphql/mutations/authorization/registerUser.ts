@@ -10,8 +10,16 @@ export const REGISTER_USER = gql`
       passwordConfirmation: $passwordConfirmation 
     ) {
       user {
-        id
+        confirmedAt
+        createdAt
         email
+        id
+        image
+        name
+        nickname
+        provider
+        uid
+        updatedAt
       }
       errors
     }

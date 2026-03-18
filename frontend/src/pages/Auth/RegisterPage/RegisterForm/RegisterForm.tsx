@@ -6,7 +6,7 @@ import { REGISTER_USER } from "../../../../graphql/mutations/authorization/regis
 export const RegisterForm = () => {
   const [formData, setFormData] = useState({
     nickname: "",
-    displayName: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -38,13 +38,14 @@ export const RegisterForm = () => {
       const response = await registerUser({
         variables: {
           nickname: formData.nickname,
-          displayName: formData.displayName,
+          name: formData.name,
           email: formData.email,
           password: formData.password,
+          passwordConfirmation: formData.confirmPassword
         },
       });
 
-      console.log("Rejestracja zakonczona:", response.data);
+      console.log("Rejestracja zakonczona: ", response.data);
 
     } catch (err) {
       console.error("Blad podczas rejestracji:", err);
@@ -52,12 +53,12 @@ export const RegisterForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50">
+    <div className="flex items-center justify-center min-h-screen p-4 bg-gray-900">
       <form
         onSubmit={handleRegisterSubmit}
-        className="w-full max-w-md p-10 bg-white rounded-lg shadow-md"
+        className="w-full max-w-md p-10 bg-gray-800 rounded-lg shadow-md"
       >
-        <h2 className="mb-8 text-2xl font-bold text-center text-gray-900">
+        <h2 className="mb-8 text-2xl font-bold text-center text-gray-50">
           Załóż konto
         </h2>
 
@@ -71,19 +72,19 @@ export const RegisterForm = () => {
           label="Nickname"
           id="nickname"
           type="text"
-          placeholder="Your nickname"
+          placeholder="Your displayed nickname"
           required
           value={formData.nickname}
           onChange={handleChange}
         />
 
         <InputField
-          label="Display Name"
-          id="displayName" 
+          label="Name"
+          id="name" 
           type="text"
-          placeholder="Your displayed name"
+          placeholder="Your name"
           required
-          value={formData.displayName}
+          value={formData.name}
           onChange={handleChange}
         />
 
