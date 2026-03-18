@@ -106,6 +106,8 @@ jobs:
           DATABASE_URL: mysql2://127.0.0.1:3306
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare test test:system
+        with:
+          working-directory: backend
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v7
