@@ -2,7 +2,7 @@
 
 module Types
   class QueryType < Types::BaseObject
-    field :current_user, resolver: Queries::Users::CurrentUser, description: "Fetch current user based on cookie tokens"
+    field :current_user, resolver: Queries::Users::CurrentUser, description: "Fetch current user based on cookie tokensw"
 
     field :fetch_all_games, resolver: Queries::Game::FetchAllGames, description: "Fetch every game going on in the app, test purposes only"
 
