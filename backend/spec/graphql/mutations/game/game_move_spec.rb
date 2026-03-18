@@ -31,7 +31,7 @@ RSpec.describe Mutations::Game::GameMove do
 
           result = resolve_mutation
 
-          expect(result).to eq({message: "Pomyślnie wykonano ruch w grze", success: true})
+          expect(result).to eq({ message: "Pomyślnie wykonano ruch w grze", success: true })
         end
       end
 
