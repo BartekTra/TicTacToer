@@ -9,6 +9,7 @@ module Queries
       # #test 2 to check github actions
       # next test for gh actions
       # next test
+      # next
     end
   end
 end
