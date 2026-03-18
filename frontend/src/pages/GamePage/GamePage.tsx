@@ -34,7 +34,7 @@ const GamePage: React.FC = () => {
   if (!gameBoard || !gameData)
     return (
       <div className="h-screen w-screen flex justify-center items-center text-white bg-mybg">
-        <h1>Ładowanie planszy...</h1>
+        <h1>Ładowanie planszy ...</h1>
       </div>
     );
 
