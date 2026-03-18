@@ -20,6 +20,9 @@ jobs:
           script: |
             export PATH="$HOME/.rbenv/bin:$PATH"
             eval "$(rbenv init -)"
+            which ruby 
+            ruby -v   
+            rbenv --version    
             cd railstictactoer/backend
             git pull origin main
             bundle install
