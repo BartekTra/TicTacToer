@@ -106,5 +106,6 @@ jobs:
           DATABASE_URL: mysql2://127.0.0.1:3306
           # REDIS_URL: redis://localhost:6379/0
           FRONTEND_URL: "http://localhost:3000"
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         working-directory: backend
         run: bin/rails db:test:prepare test && bundle exec rspec
