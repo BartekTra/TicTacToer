@@ -1,15 +1,13 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useMutation, useLazyQuery, useQuery } from "@apollo/client/react";
+import { useMutation } from "@apollo/client/react";
 import { HANDLE_MOVE } from "../../graphql/mutations/games/handleMove";
-import { useAppSelector } from "../../app/hooks";
 import { GameBoard } from "./GameComponents/GameBoard";
 import { GameInfo } from "./GameComponents/GameInfo";
 import { useGameWebSocket } from "../../hooks/useGameWebSocket";
 
 const GamePage: React.FC = () => {
   const { id: gameId } = useParams<{ id: string }>();
-  const user = useAppSelector((state) => state.counter.value);
 
   const { gameData, gameBoard, currentTurn, winner, countdown } =
     useGameWebSocket(gameId);

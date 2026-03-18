@@ -26,10 +26,10 @@ export const LoginForm = () => {
   });
 
   const handleLogin = async (e: ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     try {
-      loginUser({variables: {email: email, password: password}})
+      loginUser({ variables: { email: email, password: password } });
     } catch (error) {
       console.error("Błąd logowania:", error);
     }
@@ -50,6 +50,7 @@ export const LoginForm = () => {
           id="email"
           type="email"
           placeholder="jan.kowalski@example.com"
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
 
@@ -58,6 +59,7 @@ export const LoginForm = () => {
           id="password"
           type="password"
           placeholder="••••••••"
+          onChange={(e) => setPassword(e.target.value)}
           required
         />
 
@@ -67,6 +69,8 @@ export const LoginForm = () => {
               type="checkbox"
               id="remember"
               className="w-4 h-4 text-gray-100 transition duration-150 ease-in-out border-gray-300 rounded cursor-pointer focus:ring-blue-500"
+              onChange={(e) => setRememberMe(e.target.checked)}
+              checked={rememberMe}
             />
             <label
               htmlFor="remember"

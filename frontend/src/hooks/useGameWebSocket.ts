@@ -4,7 +4,6 @@ import {
   createConsumer,
   Consumer,
   Subscription,
-  logger,
 } from "@rails/actioncable";
 import { type GameData } from "../types/GameData";
 import { type User } from "../types/User";

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMutation } from "@apollo/client/react";
 import { JOIN_GAME } from "../../graphql/mutations/games/joinGame";
 import type { GameData } from "../../types/GameData";
@@ -20,8 +20,8 @@ const LandingPage = () => {
   const [joinGame, { data, loading, error }] =
     useMutation<JoinGameResponseType>(JOIN_GAME, {
       fetchPolicy: "network-only",
-      onError: (err) => {
-        console.log(err);
+      onError: () => {
+        console.log(error);
       },
     });
 
