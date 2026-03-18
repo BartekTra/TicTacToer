@@ -5,7 +5,6 @@ module Queries
       def resolve
         context[:current_user]
       end
-      # 1
     end
   end
 end
