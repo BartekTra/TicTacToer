@@ -6,18 +6,22 @@ import { LOGIN_USER } from "../../../../graphql/mutations/authorization/loginUse
 import { type UserLoginResponse } from "./UserLoginResponse";
 import { useAppDispatch } from "../../../../app/hooks";
 import { setCredentials } from "../../../../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [rememberMe, setRememberMe] = useState<boolean>(false);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [loginUser] = useMutation<UserLoginResponse>(LOGIN_USER, {
     fetchPolicy: "network-only",
     onCompleted: (data) => {
+      
       if (data?.loginUser.user) {
         dispatch(setCredentials(data.loginUser.user));
+        navigate("/");
       }
     },
     onError: (error) => {

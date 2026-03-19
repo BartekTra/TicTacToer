@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/client/react';
 import { type User } from '../types/User';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppDispatch } from '../app/hooks';
+import { useAppSelector } from '../app/hooks';
 
 interface UserContextProps {
   children: ReactNode;
@@ -19,12 +20,18 @@ const UserContext = ({ children }: UserContextProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const user = useAppSelector((state)=>(state.auth.user))
+  const isAuth = useAppSelector((state)=>(state.auth.isAuthenticated))
 
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
 
+  
   const { data, loading, error } = useQuery<CurrentUserResponse>(CURRENT_USER, {
     fetchPolicy: 'network-only', 
   });
+
+
+
 
   useEffect(() => {
     if (loading) return;
@@ -36,9 +43,11 @@ const UserContext = ({ children }: UserContextProps) => {
       }
     } else {
       const hasError = error || (data && !data.currentUser);
-      
+
       if (hasError && !isAuthPage) {
-        navigate("/login");
+        if(!user && !isAuth){
+          navigate("/login");
+        }
       }
     }
   }, [data, loading, error, isAuthPage, dispatch, navigate]);

@@ -1,9 +1,20 @@
 import { useState, type ChangeEvent } from "react";
 import { InputField } from "../../../../components/InputField";
 import { Button } from "../../../../components/Button";
-import { useMutation } from '@apollo/client/react';
+import { useMutation } from "@apollo/client/react";
 import { REGISTER_USER } from "../../../../graphql/mutations/authorization/registerUser";
+import { useNavigate } from "react-router-dom";
+import type { User } from "../../../../types/User";
+
+interface RegisterMutationResponseData {
+  registerUser: {
+    errors: string[];
+    user: User;
+  };
+}
+
 export const RegisterForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nickname: "",
     name: "",
@@ -15,7 +26,8 @@ export const RegisterForm = () => {
 
   const [validationError, setValidationError] = useState("");
 
-  const [registerUser, { loading, error: apolloError }] = useMutation(REGISTER_USER);
+  const [registerUser, { data, loading, error: apolloError }] =
+    useMutation<RegisterMutationResponseData>(REGISTER_USER);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value, type, checked } = e.target;
@@ -26,8 +38,8 @@ export const RegisterForm = () => {
     if (validationError) setValidationError("");
   };
 
-  const handleRegisterSubmit = async (e: { preventDefault: () => void; }) => {
-    e.preventDefault(); 
+  const handleRegisterSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
       setValidationError("Podane hasła nie są identyczne.");
@@ -41,12 +53,16 @@ export const RegisterForm = () => {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          passwordConfirmation: formData.confirmPassword
+          passwordConfirmation: formData.confirmPassword,
         },
       });
 
-      console.log("Rejestracja zakonczona: ", response.data);
+      if (response.data?.registerUser.user) {
+        alert("Pomyślnie zarejestrowano");
+        navigate("/login");
+      }
 
+      console.log("Rejestracja zakonczona: ", response.data);
     } catch (err) {
       console.error("Blad podczas rejestracji:", err);
     }
@@ -80,7 +96,7 @@ export const RegisterForm = () => {
 
         <InputField
           label="Name"
-          id="name" 
+          id="name"
           type="text"
           placeholder="Your name"
           required
@@ -132,11 +148,17 @@ export const RegisterForm = () => {
             className="ml-2 text-sm text-gray-600 cursor-pointer"
           >
             Akceptuję{" "}
-            <a href="/terms" className="font-medium text-blue-600 hover:underline">
+            <a
+              href="/terms"
+              className="font-medium text-blue-600 hover:underline"
+            >
               Regulamin
             </a>{" "}
             oraz{" "}
-            <a href="/privacy" className="font-medium text-blue-600 hover:underline">
+            <a
+              href="/privacy"
+              className="font-medium text-blue-600 hover:underline"
+            >
               Politykę Prywatności
             </a>
           </label>
@@ -148,7 +170,10 @@ export const RegisterForm = () => {
 
         <p className="mt-6 text-sm text-center text-gray-500">
           Masz już konto?{" "}
-          <a href="/login" className="font-medium text-blue-600 hover:underline">
+          <a
+            href="/login"
+            className="font-medium text-blue-600 hover:underline"
+          >
             Zaloguj się
           </a>
         </p>
