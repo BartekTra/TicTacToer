@@ -25,13 +25,9 @@ const UserContext = ({ children }: UserContextProps) => {
 
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
 
-  
   const { data, loading, error } = useQuery<CurrentUserResponse>(CURRENT_USER, {
     fetchPolicy: 'network-only', 
   });
-
-
-
 
   useEffect(() => {
     if (loading) return;
