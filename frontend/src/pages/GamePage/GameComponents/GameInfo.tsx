@@ -22,7 +22,7 @@ export const GameInfo: React.FC<GameInfoProps> = ({
         </p>
       )}
       <p className="text-lg">
-        Aktualna tura: <span className="font-bold">{currentTurn?.email}</span>
+        Aktualna tura: <span className="font-bold">{currentTurn?.nickname}</span>
       </p>
       {opponentId && (
         <p className="text-gray-300">Przeciwnik: {opponentId.email}</p>
