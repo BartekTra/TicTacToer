@@ -8,7 +8,7 @@ interface GameBoardProps {
 
 export const GameBoard: React.FC<GameBoardProps> = ({ boardString, onMove }) => {
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid grid-cols-3 gap-2 border border-gray-600 p-2 rounded-sm  w-[320px] h-[320px]">
       {boardString.split("").map((char, index) => (
         <GameCell 
           key={index} 

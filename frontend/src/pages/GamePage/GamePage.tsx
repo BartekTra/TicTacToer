@@ -5,6 +5,10 @@ import { HANDLE_MOVE } from "../../graphql/mutations/games/handleMove";
 import { GameBoard } from "./GameComponents/GameBoard";
 import { GameInfo } from "./GameComponents/GameInfo";
 import { useGameWebSocket } from "../../hooks/useGameWebSocket";
+import { PlayerInfo } from "./GameComponents/PlayerInfo";
+import PlayerTimerWrapper from "./GameComponents/PlayerTimerWrapper";
+import type { GameData } from "../../types/GameData";
+import type { User } from "../../types/User";
 
 const GamePage: React.FC = () => {
   const { id: gameId } = useParams<{ id: string }>();
@@ -14,7 +18,7 @@ const GamePage: React.FC = () => {
 
   const [handleMoveMutation] = useMutation(HANDLE_MOVE, {
     fetchPolicy: "network-only",
-    onError: ((err) => console.log(err))
+    onError: (err) => console.log(err),
   });
 
   useEffect(() => {
@@ -28,8 +32,6 @@ const GamePage: React.FC = () => {
       console.error("Błąd przy wysyłaniu ruchu:", err);
     }
   };
-
-
 
   if (!gameBoard || !gameData)
     return (
@@ -47,7 +49,36 @@ const GamePage: React.FC = () => {
           opponentId={gameData.player2 ? gameData.player2 : null}
           winner={winner}
         />
-        <GameBoard boardString={gameBoard} onMove={handleMove} />
+        <div className="flex h-full w-screen items-center justify-center gap-2">
+          {/* gracz O */}
+          <div className="self-start">
+            <PlayerTimerWrapper
+              isActive={
+                currentTurn?.id === gameData.player1?.id &&
+                gameData.player2 !== null &&
+                gameData.winner === null
+              }
+              duration={15}
+            >
+              <PlayerInfo nickname={gameData.player1?.nickname ? gameData.player1.nickname : "Nie ma gracza"} symbol="O" />
+            </PlayerTimerWrapper>
+          </div>
+
+          <GameBoard boardString={gameBoard} onMove={handleMove} />
+          {/* gracz X */}
+          <div className="self-end">
+            <PlayerTimerWrapper
+              isActive={
+                currentTurn?.id === gameData.player2?.id &&
+                gameData.player1 !== null &&
+                gameData.winner === null
+              }
+              duration={15}
+            >
+              <PlayerInfo nickname={gameData.player2?.nickname ? gameData.player2.nickname : "Gracz nie ma nazwy?"} symbol="X" />
+            </PlayerTimerWrapper>
+          </div>
+        </div>
       </div>
     </div>
   );
