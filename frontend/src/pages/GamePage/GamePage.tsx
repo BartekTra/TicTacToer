@@ -7,8 +7,6 @@ import { GameInfo } from "./GameComponents/GameInfo";
 import { useGameWebSocket } from "../../hooks/useGameWebSocket";
 import { PlayerInfo } from "./GameComponents/PlayerInfo";
 import PlayerTimerWrapper from "./GameComponents/PlayerTimerWrapper";
-import type { GameData } from "../../types/GameData";
-import type { User } from "../../types/User";
 
 const GamePage: React.FC = () => {
   const { id: gameId } = useParams<{ id: string }>();

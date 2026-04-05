@@ -26,7 +26,7 @@ export const RegisterForm = () => {
 
   const [validationError, setValidationError] = useState("");
 
-  const [registerUser, { data, loading, error: apolloError }] =
+  const [registerUser, { loading, error: apolloError }] =
     useMutation<RegisterMutationResponseData>(REGISTER_USER);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

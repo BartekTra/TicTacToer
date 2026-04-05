@@ -1,5 +1,4 @@
 import React from "react";
-import { type User } from "../../../types/User";
 
 interface PlayerInfo{
   nickname: String;
