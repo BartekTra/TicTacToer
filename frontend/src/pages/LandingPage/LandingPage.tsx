@@ -44,7 +44,7 @@ const LandingPage = () => {
   if (loading) return <p className="bg-gray-900">hehe</p>;
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center font-sans">
+    <div className="h-full bg-gray-900 flex items-center justify-center font-sans">
       <div className="bg-gray-800 border border-gray-700 rounded-sm shadow-2xl p-10 w-80 flex flex-col items-center text-center">
         <h1 className="text-gray-100 text-2xl font-bold uppercase tracking-widest mb-10">
           dołącz do gry
