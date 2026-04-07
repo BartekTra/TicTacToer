@@ -15,10 +15,24 @@ export const LoginForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const handleTestButton = async (index: number) => {
+    let testIndex = "";
+    switch (index) {
+      case 1:
+        testIndex = "";
+        break;
+      case 2:
+        testIndex = "2";
+        break;
+    }
+    await loginUser({
+      variables: { email: `testuje${testIndex}@wp.pl`, password: "12qwaszx" },
+    });
+  };
+
   const [loginUser] = useMutation<UserLoginResponse>(LOGIN_USER, {
     fetchPolicy: "network-only",
     onCompleted: (data) => {
-      
       if (data?.loginUser.user) {
         dispatch(setCredentials(data.loginUser.user));
         navigate("/");
@@ -103,6 +117,22 @@ export const LoginForm = () => {
           </a>
         </p>
       </form>
+      {import.meta.env.DEV && (
+        <div>
+          <button
+            onClick={() => handleTestButton(1)}
+            className=" w-50 h-20 bg-gray-300 outline-1 hover:bg-gray-500"
+          >
+            1
+          </button>
+          <button
+            onClick={() => handleTestButton(2)}
+            className="bg-gray-300  w-50 h-20 outline-1 hover:bg-gray-500"
+          >
+            2
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -41,12 +41,7 @@ const GamePage: React.FC = () => {
   return (
     <div className="bg-gray-900 h-full w-screen flex flex-row justify-center items-center text-white">
       <div className="flex flex-col items-center">
-        <GameInfo
-          countdown={countdown}
-          currentTurn={currentTurn}
-          opponentId={gameData.player2 ? gameData.player2 : null}
-          winner={winner}
-        />
+
         <div className="flex h-full w-full items-center justify-center gap-2">
           {/* gracz O */}
           <div className="self-start">

@@ -1,16 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
 import { NavButton } from "./NavBarComponents/NavButton";
-
-const NAV_LINKS = [
-  { to: "/", label: "Strona Główna" },
-  { to: "/login", label: "Logowanie" },
-  { to: "/register", label: "Rejestracja" },
-];
+import { JoinGameButton } from "./NavBarComponents/JoinGameButton";
+import { useJoinGame } from "../../hooks/useJoinGame";
 
 export default function Navbar() {
   const user = useAppSelector((state) => state.auth.user);
   const location = useLocation();
+  const { handleJoin, loading } = useJoinGame();
 
   const handleLogout = () => {};
 
@@ -30,9 +27,21 @@ export default function Navbar() {
         <ul className="flex items-center gap-1">
           <NavButton to={"/"} label={"Strona Główna"} isActive={location.pathname === "/"} />
 
-          <NavButton to={"/"} label={"Gra - Classic"} isActive={location.pathname === "/game"} />
+          {user && (
+            <>
+              <JoinGameButton
+                onClick={() => handleJoin("classic")}
+                label={"Gra - Classic"}
+                loading={loading}
+              />
 
-          <NavButton to={"/"} label={"Gra - Infinite"} isActive={location.pathname === "game"} />
+              <JoinGameButton
+                onClick={() => handleJoin("infinite")}
+                label={"Gra - Infinite"}
+                loading={loading}
+              />
+            </>
+          )}
         </ul>
 
         <div className="flex items-center gap-3">
