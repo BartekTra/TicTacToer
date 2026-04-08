@@ -12,7 +12,16 @@ module Games
                          raise ArgumentError, "Nieznany tryb gry: #{game.mode}"
       end
 
-      strategy_class.new(user: user, game: game, cell: cell).call
+      game = strategy_class.new(user: user, game: game, cell: cell).call
+
+      if game.winner_id.present?
+        Ratings::CalculateElo.new(game).call
+      elsif game.game_mode == "classic" && game.movecounter == 9
+        Ratings::CalculateElo.new(game, is_draw: true).call
+      end
+
+      game
     end
   end
 end
+

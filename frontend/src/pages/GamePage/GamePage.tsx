@@ -3,10 +3,10 @@ import { useParams } from "react-router-dom";
 import { useMutation } from "@apollo/client/react";
 import { HANDLE_MOVE } from "../../graphql/mutations/games/handleMove";
 import { GameBoard } from "./GameComponents/GameBoard";
-import { GameInfo } from "./GameComponents/GameInfo";
 import { useGameWebSocket } from "../../hooks/useGameWebSocket";
 import { PlayerInfo } from "./GameComponents/PlayerInfo";
 import PlayerTimerWrapper from "./GameComponents/PlayerTimerWrapper";
+import { GameInfo } from "./GameComponents/GameInfo";
 
 const GamePage: React.FC = () => {
   const { id: gameId } = useParams<{ id: string }>();
@@ -21,6 +21,7 @@ const GamePage: React.FC = () => {
 
   useEffect(() => {
     console.log(gameData, gameBoard, currentTurn, winner, countdown);
+    console.log(gameData?.player1?.classicRating)
   }, [gameData, gameBoard, currentTurn, winner, countdown]);
 
   const handleMove = async (cellIndex: number) => {
@@ -41,7 +42,12 @@ const GamePage: React.FC = () => {
   return (
     <div className="bg-gray-900 h-full w-screen flex flex-row justify-center items-center text-white">
       <div className="flex flex-col items-center">
-
+        <GameInfo
+          countdown={countdown}
+          currentTurn={currentTurn}
+          opponentId={gameData?.player2}
+          winner={winner}
+        />
         <div className="flex h-full w-full items-center justify-center gap-2">
           {/* gracz O */}
           <div className="self-start">
@@ -53,7 +59,11 @@ const GamePage: React.FC = () => {
               }
               duration={15}
             >
-              <PlayerInfo nickname={gameData.player1?.nickname ? gameData.player1.nickname : "Nie ma gracza"} symbol="O" />
+              <PlayerInfo 
+                nickname={gameData.player1?.nickname ? gameData.player1.nickname : "Nie ma gracza"} 
+                symbol="O" 
+                rating={gameData.game_mode === "classic" ? gameData.player1?.classicRating : gameData.player1?.infiniteRating}
+              />
             </PlayerTimerWrapper>
           </div>
 
@@ -68,7 +78,11 @@ const GamePage: React.FC = () => {
               }
               duration={15}
             >
-              <PlayerInfo nickname={gameData.player2?.nickname ? gameData.player2.nickname : "Gracz nie ma nazwy?"} symbol="X" />
+              <PlayerInfo 
+                nickname={gameData.player2?.nickname ? gameData.player2.nickname : "Gracz nie ma nazwy?"} 
+                symbol="X" 
+                rating={gameData.game_mode === "classic" ? gameData.player2?.classicRating : gameData.player2?.infiniteRating}
+              />
             </PlayerTimerWrapper>
           </div>
         </div>

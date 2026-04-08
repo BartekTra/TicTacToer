@@ -11,6 +11,8 @@ module Types
       field :confirmed_at, GraphQL::Types::ISO8601DateTime, null: true
       field :created_at, GraphQL::Types::ISO8601DateTime, null: false
       field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+      field :classic_rating, Integer, null: true
+      field :infinite_rating, Integer, null: true
     end
   end
 end

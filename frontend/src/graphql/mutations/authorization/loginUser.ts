@@ -4,7 +4,8 @@ export const LOGIN_USER = gql`
 mutation LoginUser($email: String!, $password: String!) {
     loginUser(email: $email, password: $password) {
         errors
-        user{
+        success
+        user {
             confirmedAt
             createdAt
             email
@@ -15,6 +16,8 @@ mutation LoginUser($email: String!, $password: String!) {
             provider
             uid
             updatedAt
+            infiniteRating
+            classicRating
         }
     }
 }
