@@ -7,6 +7,6 @@ export interface GameData {
   player1: User | null;
   player2: User | null;
   winner: User | null;
-  gameMode: string;
+  game_mode: string;
   currentturn: User | null;
 }

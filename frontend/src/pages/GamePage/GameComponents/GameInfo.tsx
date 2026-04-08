@@ -25,14 +25,14 @@ export const GameInfo: React.FC<GameInfoProps> = ({
         Aktualna tura: <span className="font-bold">{currentTurn?.nickname}</span>
       </p>
       {opponentId && (
-        <p className="text-gray-300">Przeciwnik: {opponentId.email}</p>
+        <p className="text-gray-300">Przeciwnik: {opponentId.nickname}</p>
       )}
       {!opponentId && (
         <p> Poczekaj na przeciwnika </p>
       )}
       {winner && (
         <p className="text-green-400 font-bold text-2xl mt-2">
-          WYGRANY: {winner.email}
+          WYGRANY: {winner.nickname}
         </p>
       )}
     </div>

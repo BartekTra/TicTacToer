@@ -3,4 +3,6 @@ export interface User {
   id: number | null;
   name: string | null;
   nickname: string | null;
+  classicRating: number | null;
+  infiniteRating: number | null;
 }

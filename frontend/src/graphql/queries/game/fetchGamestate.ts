@@ -15,16 +15,22 @@ export const FETCH_GAMESTATE = gql`
               email
               id
               nickname
+              classicRating
+              infiniteRating
           }
           player2 {
               email
               id
               nickname
+              classicRating
+              infiniteRating
           }
           player1 {
               email
               id
               nickname
+              classicRating
+              infiniteRating
           }
       }
   }

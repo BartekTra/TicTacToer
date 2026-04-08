@@ -4,6 +4,8 @@ module Types
       field :id, ID, null: false
       field :nickname, String, null: true
       field :email, String, null: true
+      field :classic_rating, Integer, null: true
+      field :infinite_rating, Integer, null: true
     end
   end
 end

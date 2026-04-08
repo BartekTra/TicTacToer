@@ -25,7 +25,11 @@ export default function Navbar() {
         </Link>
 
         <ul className="flex items-center gap-1">
-          <NavButton to={"/"} label={"Strona Główna"} isActive={location.pathname === "/"} />
+          <NavButton
+            to={"/"}
+            label={"Strona Główna"}
+            isActive={location.pathname === "/"}
+          />
 
           {user && (
             <>
@@ -45,9 +49,20 @@ export default function Navbar() {
         </ul>
 
         <div className="flex items-center gap-3">
-          <span className="hidden text-sm text-zinc-400 sm:block">
-            {user?.email}
-          </span>
+          <div className="flex flex-col items-center">
+            <span className="hidden text-sm text-zinc-400 sm:block">
+              {user?.email}
+            </span>
+            <div className="flex flex-row space-x-5">
+              <span className="hidden text-sm text-zinc-400 sm:block">
+                {user?.classicRating}
+              </span>
+              <span className="hidden text-sm text-zinc-400 sm:block">
+                {user?.infiniteRating}
+              </span>
+            </div>
+          </div>
+
           <button
             onClick={handleLogout}
             className="rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-zinc-300 transition hover:border-white/20 hover:bg-white/10 hover:text-white active:scale-95"

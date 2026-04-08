@@ -15,16 +15,20 @@ class Game < ApplicationRecord
 
 
   def broadcast_game
-    ActionCable.server.broadcast("GamesChannel_#{id}", {
+    payload = {
       id: id,
       board: board,
-      player1: player1,
-      player2: player2,
-      currentturn: currentturn,
-      winner: winner,
-      movecounter: movecounter,
+      player1: player1.as_json,
+      player2: player2.as_json,
+      current_turn: currentturn,
+      winner: winner.as_json,
+      move_counter: movecounter,
       game_mode: game_mode
-    })
+    }
+
+    camel_cased_payload = payload.deep_transform_keys { |key| key.to_s.camelize(:lower) }
+
+    ActionCable.server.broadcast("GamesChannel_#{id}", camel_cased_payload)
   end
 
   private

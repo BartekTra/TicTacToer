@@ -32,7 +32,10 @@ const UserContext = ({ children }: UserContextProps) => {
   useEffect(() => {
     if (loading) return;
 
+    console.log(data)
+    console.log(error)
     if (data?.currentUser) {
+      console.log(data?.currentUser)
       dispatch(setCredentials(data.currentUser));
       if (isAuthPage) {
         navigate("/");

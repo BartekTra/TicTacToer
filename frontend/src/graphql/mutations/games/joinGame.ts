@@ -16,11 +16,15 @@ mutation JoinGame($gameMode: GameMode!) {
                 email
                 id
                 nickname
+                classicRating
+                infiniteRating
             }
             player1 {
                 email
                 id
                 nickname
+                classicRating
+                infiniteRating
             }
         }
     }
