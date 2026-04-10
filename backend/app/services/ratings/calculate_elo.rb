@@ -31,9 +31,12 @@ module Ratings
 
       new_p1_rating = (p1_rating + K_FACTOR * (p1_actual - p1_expected)).round
       new_p2_rating = (p2_rating + K_FACTOR * (p2_actual - p2_expected)).round
-
-      @game.player1.update!(rating_column => new_p1_rating)
-      @game.player2.update!(rating_column => new_p2_rating)
+      
+      User.transaction do
+        @game.player1.update!(rating_column => new_p1_rating)
+        @game.player2.update!(rating_column => new_p2_rating)
+      end
+      
     end
   end
 end

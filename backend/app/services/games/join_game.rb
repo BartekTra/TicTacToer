@@ -13,7 +13,10 @@ module Games
 
       game = find_game_with_empty_slot
       if game
-        join_existing_game(game)
+        Game.transaction do
+          game = find_game_with_empty_slot
+          join_existing_game(game) if game
+        end
       else
         create_new_game
       end
@@ -43,15 +46,10 @@ module Games
     end
 
     def join_existing_game(game)
-      if game.player1_id.nil?
-        game.update!(player1_id: @user.id)
-        GameBroadcaster.broadcast_state(game)
-        TurnTimeoutJob.set(wait: 15.seconds).perform_later(game.id, game.move_counter) if game.current_turn_id.present?
-      elsif game.player2_id.nil?
-        game.update!(player2_id: @user.id)
-        GameBroadcaster.broadcast_state(game)
-        TurnTimeoutJob.set(wait: 15.seconds).perform_later(game.id, game.move_counter) if game.current_turn_id.present?
-      end
+      player_column = game.player1_id.nil? ? :player1_id : :player2_id
+      game.update!(player_column => @user.id)
+      GameBroadcaster.broadcast_state(game)
+      TurnTimeoutJob.set(wait: 15.seconds).perform_later(game.id, game.move_counter) if game.current_turn_id.present?
 
       { game: game, message: "Dołączono do istniejącej gry" }
     end
@@ -60,7 +58,6 @@ module Games
       ::Game.where(game_mode: @game_mode)
             .where("player1_id IS NULL OR player2_id IS NULL")
             .order(:created_at)
-            .lock("FOR UPDATE")
             .first
     end
   end

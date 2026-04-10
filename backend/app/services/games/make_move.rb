@@ -2,15 +2,14 @@ module Games
   class MakeMove
     class ValidationError < StandardError; end
     def self.call(user:, cell:)
-      game = user.active_game
 
-      raise ValidationError, "Nie znaleziono aktywnej gry dla użytkownika" unless game
+      game = user.active_game
 
       strategy_class = case game.game_mode
       when "infinite" then Modes::Infinite
       when "classic"  then Modes::Classic
       else
-                         raise ArgumentError, "Nieznany tryb gry: #{game.game_mode}"
+        raise ArgumentError, "Nieznany tryb gry: #{game.game_mode}"
       end
 
       game = strategy_class.new(user: user, game: game, cell: cell).call
@@ -34,5 +33,6 @@ module Games
       GameBroadcaster.broadcast_state(game)
       TurnTimeoutJob.set(wait: 15.seconds).perform_later(game.id, game.move_counter)
     end
+    
   end
 end

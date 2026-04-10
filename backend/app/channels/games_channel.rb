@@ -1,7 +1,9 @@
 class GamesChannel < ApplicationCable::Channel
   def subscribed
-    # stream_from "some_channel"
     @game = Game.find(params[:id])
+
+    reject unless [@game.player1_id, @game.player2_id].include?(current_user.id)
+    
     stream_from "GamesChannel_#{@game.id}"
     @game.broadcast_game
   end
