@@ -12,7 +12,7 @@ class GraphqlController < ApplicationController
       current_user: current_user_from_cookie,
       cookies: cookies
     }
-    result = TestbuttonSchema.execute(query, variables: ensure_hash(variables), context: context, operation_name: operation_name)
+    result = TicTacToerSchema.execute(query, variables: ensure_hash(variables), context: context, operation_name: operation_name)
     render json: result
   end
 
