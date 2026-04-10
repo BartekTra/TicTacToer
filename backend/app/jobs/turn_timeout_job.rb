@@ -11,15 +11,7 @@ class TurnTimeoutJob < ApplicationJob
       winner = (game.current_turn_id == game.player1_id) ? game.player2 : game.player1
 
       game.update!(winner: winner)
-
-      if game.winner_id.present?
-        Ratings::CalculateElo.new(game).call
-      elsif game.classic? && game.move_counter == ::Game::MAX_MOVES
-        Ratings::CalculateElo.new(game, is_draw: true).call
-      end
-
-      GameBroadcaster.broadcast_finish(game)
-      GameCleanupJob.set(wait: 5.seconds).perform_later(game.id)
+      ActiveSupport::Notifications.instrument("game.finished", game: game)
     end
   end
 end

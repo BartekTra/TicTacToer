@@ -6,9 +6,9 @@ module Games
     end
 
     def call
-      existing_game = find_users_active_games
+      existing_game = @user.active_game
       if existing_game
-          return { game: existing_game, message: "Już bierzesz udział w grze" }
+        return { game: existing_game, message: "Już bierzesz udział w grze" }
       end
 
       game = find_game_with_empty_slot
@@ -24,12 +24,6 @@ module Games
 
     private
 
-    def find_users_active_games
-      ::Game.where("player1_id = ? OR player2_id = ?", @user.id, @user.id)
-            .where(winner: nil)
-            .first
-    end
-
     def create_new_game
       game = ::Game.create!(
         player1_id: @user.id,
@@ -39,8 +33,7 @@ module Games
         game_mode: @game_mode
       )
 
-      GameBroadcaster.broadcast_state(game)
-      TurnTimeoutJob.set(wait: 15.seconds).perform_later(game.id, game.move_counter) if game.current_turn_id.present?
+      ActiveSupport::Notifications.instrument("game.joined", game: game)
 
       { game: game, message: "Utworzono nową grę" }
     end
@@ -48,8 +41,7 @@ module Games
     def join_existing_game(game)
       player_column = game.player1_id.nil? ? :player1_id : :player2_id
       game.update!(player_column => @user.id)
-      GameBroadcaster.broadcast_state(game)
-      TurnTimeoutJob.set(wait: 15.seconds).perform_later(game.id, game.move_counter) if game.current_turn_id.present?
+      ActiveSupport::Notifications.instrument("game.joined", game: game)
 
       { game: game, message: "Dołączono do istniejącej gry" }
     end
