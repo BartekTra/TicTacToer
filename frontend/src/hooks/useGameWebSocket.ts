@@ -78,8 +78,8 @@ export const useGameWebSocket = (
               setGameData(data);
               setGameBoard(data.board);
               console.log(gameBoard);
-              if (data.currentturn) {
-                setCurrentTurn(data.currentturn);
+              if (data.currentTurn) {
+                setCurrentTurn(data.currentTurn);
               }
             }
             if (data.winner) {

@@ -8,5 +8,5 @@ export interface GameData {
   player2: User | null;
   winner: User | null;
   game_mode: string;
-  currentturn: User | null;
+  currentTurn: User | null;
 }

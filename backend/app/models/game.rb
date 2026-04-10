@@ -9,34 +9,15 @@ class Game < ApplicationRecord
   validate :players_must_be_different
   validate :players_cannot_be_in_multiple_games
 
-  after_commit :broadcast_game, on: [ :create, :update ]
-  after_update_commit :handle_finished_game, if: -> { winner_id.present? }
-  after_commit :schedule_turn_timeout, on: [ :create, :update ]
 
 
-  def broadcast_game
-    payload = {
-      id: id,
-      board: board,
-      player1: player1.as_json,
-      player2: player2.as_json,
-      current_turn: currentturn,
-      winner: winner.as_json,
-      move_counter: movecounter,
-      game_mode: game_mode
-    }
-
-    camel_cased_payload = payload.deep_transform_keys { |key| key.to_s.camelize(:lower) }
-
-    ActionCable.server.broadcast("GamesChannel_#{id}", camel_cased_payload)
+  def finished?
+    winner_id.present? || (game_mode == "classic" && movecounter >= 9 && saved_change_to_movecounter?)
   end
+
 
   private
 
-  def handle_finished_game
-    ActionCable.server.broadcast("GamesChannel_#{id}", { action: "please :)" })
-    GameCleanupJob.set(wait: 5.seconds).perform_later(id)
-  end
 
   def players_must_be_different
     if player1_id.present? && player1_id == player2_id
@@ -61,11 +42,4 @@ class Game < ApplicationRecord
         .exists?
   end
 
-  def schedule_turn_timeout
-    if winner_id.nil? && currentturn_id.present?
-      if saved_change_to_currentturn_id? || saved_change_to_movecounter?
-        TurnTimeoutJob.set(wait: 15.seconds).perform_later(id, movecounter)
-      end
-    end
-  end
 end

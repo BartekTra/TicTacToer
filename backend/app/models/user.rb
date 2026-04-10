@@ -9,4 +9,10 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
+
+  def active_game
+    Game.where(winner_id: nil)
+        .where("player1_id = :id OR player2_id = :id", id: id)
+        .first
+  end
 end

@@ -6,7 +6,10 @@ module Queries
       def resolve
         user = context[:current_user]
 
-        @game = user.games_as_player1 ? user.games_as_player1 : user.games_as_player2
+        @game = user.active_game
+        
+        raise GraphQL::ExecutionError, "Gra nie znaleziona" unless @game
+        @game
       end
     end
   end

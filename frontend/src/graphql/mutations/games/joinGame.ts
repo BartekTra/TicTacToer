@@ -9,9 +9,15 @@ mutation JoinGame($gameMode: GameMode!) {
             createdAt
             gameMode
             id
-            movecounter
+            moveCounter
             updatedAt
-            winner
+            winner {
+                email
+                id
+                nickname
+                classicRating
+                infiniteRating
+            }
             player2 {
                 email
                 id

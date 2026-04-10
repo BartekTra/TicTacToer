@@ -1,4 +1,3 @@
-
 import { gql } from '@apollo/client';
 
 export const FETCH_GAMESTATE = gql`
@@ -8,10 +7,16 @@ export const FETCH_GAMESTATE = gql`
           createdAt
           gameMode
           id
-          movecounter
+          moveCounter
           updatedAt
-          winner
-          currentturn {
+          winner {
+              email
+              id
+              nickname
+              classicRating
+              infiniteRating
+          }
+          currentTurn {
               email
               id
               nickname

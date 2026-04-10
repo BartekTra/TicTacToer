@@ -34,6 +34,8 @@ module Games
           winner_id: winner_id
         )
 
+        Games::EventPublisher.game_updated(@game)
+
         @game
       end
 

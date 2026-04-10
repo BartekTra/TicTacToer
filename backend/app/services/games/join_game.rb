@@ -36,14 +36,18 @@ module Games
         game_mode: @game_mode
         )
 
+      Games::EventPublisher.game_updated(game)
+
       { game: game, message: "Utworzono nową grę" }
     end
 
     def join_existing_game(game)
       if game.player1_id.nil?
         game.update!(player1_id: @user.id)
+        Games::EventPublisher.game_updated(game)
       elsif game.player2_id.nil?
         game.update!(player2_id: @user.id)
+        Games::EventPublisher.game_updated(game)
       end
 
       { game: game, message: "Dołączono do istniejącej gry" }
