@@ -9,7 +9,6 @@ module Mutations
 
       def resolve(cell:)
         user = context[:current_user]
-        raise GraphQL::ExecutionError, "Brak autoryzacji" unless user
 
         game = Games::MakeMove.call(user: user, cell: cell)
 

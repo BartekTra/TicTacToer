@@ -9,10 +9,6 @@ module Mutations
       def resolve(game_mode:)
         user = context[:current_user]
 
-        unless user
-          raise GraphQL::ExecutionError, "Brak autoryzacji"
-        end
-
         Games::JoinGame.new(user: user, game_mode: game_mode).call
       end
     end

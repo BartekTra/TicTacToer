@@ -3,14 +3,13 @@
 class GraphqlController < ApplicationController
   include ActionController::Cookies
   include DeviseTokenAuth::Concerns::SetUserByToken
-  before_action :check_authentication
 
   def execute
     variables = prepare_variables(params[:variables])
     query = params[:query]
     operation_name = params[:operationName]
     context = {
-      current_user: current_user,
+      current_user: current_user_from_cookie,
       cookies: cookies
     }
     result = TestbuttonSchema.execute(query, variables: ensure_hash(variables), context: context, operation_name: operation_name)
@@ -19,24 +18,11 @@ class GraphqlController < ApplicationController
 
   private
 
-  def check_authentication
-    return if introspection_query?
-    return if register_mutation?
-    return if login_mutation?
-
+  def current_user_from_cookie
     authenticate_user!
-  end
-
-  def login_mutation?
-    params[:query].to_s.include?("LoginUser")
-  end
-
-  def introspection_query?
-    params[:query].to_s.include?("__schema") || params[:operationName] == "IntrospectionQuery"
-  end
-
-  def register_mutation?
-    params[:query].to_s.include?("RegisterUser")
+    current_user
+  rescue StandardError
+    nil
   end
 
   def ensure_hash(variables)
@@ -69,6 +55,7 @@ class GraphqlController < ApplicationController
     logger.error e.message
     logger.error e.backtrace.join("\n")
 
-    render json: { errors: [ { message: e.message, backtrace: e.backtrace } ], data: {} }, status: 500
+    render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: 500
   end
 end
+

@@ -10,6 +10,7 @@ RSpec.describe Mutations::Game::GameMove do
   subject(:resolve_mutation) do
     mutation = described_class.allocate
     allow(mutation).to receive(:context).and_return(context)
+    mutation.authorized?(cell: cell)
     mutation.resolve(cell: cell)
   end
 

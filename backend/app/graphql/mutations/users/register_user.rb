@@ -1,6 +1,10 @@
 module Mutations
     module Users
         class RegisterUser < Mutations::BaseMutation
+            def authorized?(**_args)
+              true
+            end
+
             argument :nickname, String, required: true
             argument :name, String, required: true
             argument :email, String, required: true
