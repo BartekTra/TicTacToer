@@ -51,7 +51,7 @@ export const useGameWebSocket = (
         received(data: GameData) {
           console.log("Odebrano dane z kanału:", data);
 
-          if (data.action === "please :)") {
+          if (data.action === "Game Finished") {
             if (intervalRef.current) clearInterval(intervalRef.current);
             if (timerRef.current) clearTimeout(timerRef.current);
 

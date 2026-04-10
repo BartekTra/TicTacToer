@@ -7,7 +7,7 @@ module Queries
         user = context[:current_user]
 
         @game = user.active_game
-        
+
         raise GraphQL::ExecutionError, "Gra nie znaleziona" unless @game
         @game
       end

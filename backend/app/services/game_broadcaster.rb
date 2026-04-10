@@ -5,6 +5,6 @@ class GameBroadcaster
   end
 
   def self.broadcast_finish(game)
-    ActionCable.server.broadcast("GamesChannel_#{game.id}", { action: "please :)" })
+    ActionCable.server.broadcast("GamesChannel_#{game.id}", { action: "Game Finished" })
   end
 end

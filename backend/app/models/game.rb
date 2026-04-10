@@ -46,5 +46,4 @@ class Game < ApplicationRecord
         .where("player1_id = :uid OR player2_id = :uid", uid: user_id)
         .exists?
   end
-
 end
