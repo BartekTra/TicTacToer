@@ -10,9 +10,9 @@ module Games
         board: @game.board,
         player1: user_payload(@game.player1),
         player2: user_payload(@game.player2),
-        currentTurn: user_payload(@game.currentturn),
+        currentTurn: user_payload(@game.current_turn),
         winner: user_payload(@game.winner),
-        moveCounter: @game.movecounter,
+        moveCounter: @game.move_counter,
         gameMode: (@game.game_mode == "infinite" ? "infinite" : "classic"),
         createdAt: @game.created_at.iso8601,
         updatedAt: @game.updated_at.iso8601

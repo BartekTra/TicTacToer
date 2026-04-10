@@ -1,9 +1,14 @@
 class Game < ApplicationRecord
-  validates :game_mode, inclusion: { in: [ "classic", "infinite" ] }
+  MAX_MOVES = 9
+
+  enum game_mode: {
+    classic: "classic",
+    infinite: "infinite"
+  }
 
   belongs_to :player1, class_name: "User", optional: true
   belongs_to :player2, class_name: "User", optional: true
-  belongs_to :currentturn, class_name: "User", optional: true
+  belongs_to :current_turn, class_name: "User", optional: true
   belongs_to :winner, class_name: "User", optional: true
 
   validate :players_must_be_different
@@ -12,7 +17,7 @@ class Game < ApplicationRecord
 
 
   def finished?
-    winner_id.present? || (game_mode == "classic" && movecounter >= 9 && saved_change_to_movecounter?)
+    winner_id.present? || (classic? && move_counter >= MAX_MOVES)
   end
 
 

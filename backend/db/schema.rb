@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_07_225916) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_10_120214) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -18,14 +18,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_07_225916) do
     t.string "board", default: "123456789"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "movecounter", default: 0
-    t.bigint "currentturn_id"
+    t.integer "move_counter", default: 0
+    t.bigint "current_turn_id"
     t.bigint "winner_id"
     t.string "game_mode", default: "classic"
     t.jsonb "moves_history", default: []
     t.bigint "player1_id"
     t.bigint "player2_id"
-    t.index ["currentturn_id"], name: "index_games_on_currentturn_id"
+    t.index ["current_turn_id"], name: "index_games_on_current_turn_id"
     t.index ["player1_id"], name: "index_games_on_player1_id"
     t.index ["player2_id"], name: "index_games_on_player2_id"
     t.index ["winner_id"], name: "index_games_on_winner_id"
@@ -58,7 +58,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_07_225916) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
-  add_foreign_key "games", "users", column: "currentturn_id"
+  add_foreign_key "games", "users", column: "current_turn_id"
   add_foreign_key "games", "users", column: "player1_id"
   add_foreign_key "games", "users", column: "player2_id"
   add_foreign_key "games", "users", column: "winner_id"

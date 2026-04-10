@@ -18,7 +18,7 @@ module Games
         [ board_array, new_history ]
       end
 
-      def determine_winner(board_array, _movecounter)
+      def determine_winner(board_array, _move_counter)
         winning_move?(board_array) ? @user.id : nil
       end
     end

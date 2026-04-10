@@ -31,12 +31,13 @@ module Games
       game = ::Game.create!(
         player1_id: @user.id,
         board: "123456789",
-        currentturn_id: @user.id,
-        movecounter: 1,
+        current_turn_id: @user.id,
+        move_counter: 1,
         game_mode: @game_mode
-        )
+      )
 
-      Games::EventPublisher.game_updated(game)
+      GameBroadcaster.broadcast_state(game)
+      TurnTimeoutJob.set(wait: 15.seconds).perform_later(game.id, game.move_counter) if game.current_turn_id.present?
 
       { game: game, message: "Utworzono nową grę" }
     end
@@ -44,10 +45,12 @@ module Games
     def join_existing_game(game)
       if game.player1_id.nil?
         game.update!(player1_id: @user.id)
-        Games::EventPublisher.game_updated(game)
+        GameBroadcaster.broadcast_state(game)
+        TurnTimeoutJob.set(wait: 15.seconds).perform_later(game.id, game.move_counter) if game.current_turn_id.present?
       elsif game.player2_id.nil?
         game.update!(player2_id: @user.id)
-        Games::EventPublisher.game_updated(game)
+        GameBroadcaster.broadcast_state(game)
+        TurnTimeoutJob.set(wait: 15.seconds).perform_later(game.id, game.move_counter) if game.current_turn_id.present?
       end
 
       { game: game, message: "Dołączono do istniejącej gry" }

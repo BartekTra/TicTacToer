@@ -13,10 +13,10 @@ module Games
         [ board_array, new_history ]
       end
 
-      def determine_winner(board_array, movecounter)
+      def determine_winner(board_array, move_counter)
         if winning_move?(board_array)
           @user.id
-        elsif movecounter == 9
+        elsif move_counter == ::Game::MAX_MOVES
           nil
         else
           nil

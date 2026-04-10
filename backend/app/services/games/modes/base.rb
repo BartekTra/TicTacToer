@@ -22,19 +22,17 @@ module Games
         board_array, new_history = apply_board_changes
 
         next_turn_id = (@user.id == @game.player1_id) ? @game.player2_id : @game.player1_id
-        new_movecounter = @game.movecounter.to_i + 1
+        new_move_counter = @game.move_counter.to_i + 1
 
-        winner_id = determine_winner(board_array, new_movecounter)
+        winner_id = determine_winner(board_array, new_move_counter)
 
         @game.update!(
           board: board_array.join,
           moves_history: new_history,
-          currentturn_id: next_turn_id,
-          movecounter: new_movecounter,
+          current_turn_id: next_turn_id,
+          move_counter: new_move_counter,
           winner_id: winner_id
         )
-
-        Games::EventPublisher.game_updated(@game)
 
         @game
       end
@@ -45,14 +43,14 @@ module Games
         raise NotImplementedError, "Klasa dziedzicząca musi zaimplementować tę metodę"
       end
 
-      def determine_winner(board_array, movecounter)
+      def determine_winner(board_array, move_counter)
         raise NotImplementedError, "Klasa dziedzicząca musi zaimplementować tę metodę"
       end
 
       def validate_game_rules!
         raise ValidationError, "Nie bierzesz udziału w tej grze" unless [ @game.player1_id, @game.player2_id ].include?(@user.id)
 
-        raise ValidationError, "To nie jest Twoja kolej" unless @game.currentturn_id == @user.id
+        raise ValidationError, "To nie jest Twoja kolej" unless @game.current_turn_id == @user.id
 
         raise ValidationError, "To pole jest już zajęte" if @game.board.chars[@cell].in?(%w[O X])
 

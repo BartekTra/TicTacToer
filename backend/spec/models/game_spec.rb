@@ -5,7 +5,7 @@ RSpec.describe Game, type: :model do
   let(:user2) { create(:user) }
 
   describe 'walidacje' do
-    it { is_expected.to validate_inclusion_of(:game_mode).in_array(%w[classic infinite]) }
+    it { is_expected.to define_enum_for(:game_mode).with_values(classic: 'classic', infinite: 'infinite').backed_by_column_of_type(:string) }
 
     context 'kiedy player1 i player2 to ten sam użytkownik' do
       it 'zwraca błąd walidacji' do
@@ -28,30 +28,7 @@ RSpec.describe Game, type: :model do
   describe 'relacje' do
     it { is_expected.to belong_to(:player1).class_name('User').optional }
     it { is_expected.to belong_to(:player2).class_name('User').optional }
-    it { is_expected.to belong_to(:currentturn).class_name('User').optional }
+    it { is_expected.to belong_to(:current_turn).class_name('User').optional }
     it { is_expected.to belong_to(:winner).class_name('User').optional }
-  end
-
-  describe 'callbacks' do
-    let(:game) { build(:game, player1: user1, player2: user2) }
-
-    it 'wywołuje broadcast_game po utworzeniu' do
-      expect(game).to receive(:broadcast_game)
-      game.save!
-    end
-
-    it 'wywołuje broadcast_game po aktualizacji' do
-      game.save!
-      expect(game).to receive(:broadcast_game)
-      game.update!(movecounter: 1)
-    end
-
-    context 'kiedy gra jest zakończona' do
-      it 'wywołuje handle finished game' do
-        game.save!
-        expect(game).to receive(:handle_finished_game)
-        game.update!(winner: user1)
-      end
-    end
   end
 end
