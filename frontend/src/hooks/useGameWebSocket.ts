@@ -1,36 +1,33 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState, useCallback } from "react";
 import {
   createConsumer,
-  Consumer,
-  Subscription,
+  type Consumer,
+  type Subscription,
 } from "@rails/actioncable";
 import { type GameData } from "../types/GameData";
-import { type User } from "../types/User";
 
 interface UseGameWebSocketReturn {
   gameData: GameData | null;
-  gameBoard: string | null;
-  currentTurn: User | null;
-  winner: User | null;
   countdown: number | null;
+  isGameFinished: boolean;
 }
 
 export const useGameWebSocket = (
   gameId: string | undefined,
 ): UseGameWebSocketReturn => {
   const [gameData, setGameData] = useState<GameData | null>(null);
-  const [gameBoard, setGameBoard] = useState<string | null>(null);
-  const [currentTurn, setCurrentTurn] = useState<User | null>(null);
-  const [winner, setWinner] = useState<User | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [isGameFinished, setIsGameFinished] = useState(false);
 
   const cableRef = useRef<Consumer | null>(null);
   const subscriptionRef = useRef<Subscription | null>(null);
   const timerRef = useRef<number | null>(null);
   const intervalRef = useRef<number | null>(null);
 
-  const navigate = useNavigate();
+  const clearTimers = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (intervalRef.current) clearInterval(intervalRef.current);
+  }, []);
 
   useEffect(() => {
     if (!gameId) return;
@@ -42,26 +39,18 @@ export const useGameWebSocket = (
     const subscription = cable.subscriptions.create(
       { channel: "GamesChannel", id: gameId },
       {
-        connected() {
-          console.log("Połączono z GamesChannel");
-        },
-        disconnected() {
-          console.log("Rozłączono z GamesChannel");
-        },
         received(data: GameData) {
-          console.log("Odebrano dane z kanału:", data);
-
           if (data.action === "Game Finished") {
-            if (intervalRef.current) clearInterval(intervalRef.current);
-            if (timerRef.current) clearTimeout(timerRef.current);
+            clearTimers();
 
+            setGameData(data);
             setCountdown(3);
 
             timerRef.current = setTimeout(() => {
               if (subscriptionRef.current) {
                 subscriptionRef.current.unsubscribe();
               }
-              navigate("/");
+              setIsGameFinished(true);
             }, 3000);
 
             intervalRef.current = setInterval(() => {
@@ -73,18 +62,8 @@ export const useGameWebSocket = (
                 return current - 1;
               });
             }, 1000);
-          } else {
-            if (data.board) {
-              setGameData(data);
-              setGameBoard(data.board);
-              console.log(gameBoard);
-              if (data.currentTurn) {
-                setCurrentTurn(data.currentTurn);
-              }
-            }
-            if (data.winner) {
-              setWinner(data.winner);
-            }
+          } else if (data.board) {
+            setGameData(data);
           }
         },
       },
@@ -96,10 +75,9 @@ export const useGameWebSocket = (
       if (subscriptionRef.current) {
         subscriptionRef.current.unsubscribe();
       }
-      if (timerRef.current) clearTimeout(timerRef.current);
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      clearTimers();
     };
-  }, [gameId, navigate]);
+  }, [gameId, clearTimers]);
 
-  return { gameData, gameBoard, currentTurn, winner, countdown };
+  return { gameData, countdown, isGameFinished };
 };
