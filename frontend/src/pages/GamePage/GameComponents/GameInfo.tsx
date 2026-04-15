@@ -1,21 +1,21 @@
-import React from "react";
 import { type User } from "../../../types/User";
+import { memo } from "react";
 
 interface GameInfoProps {
   countdown: number | null;
   currentTurn: User | null;
-  opponentId?: User | null;
+  opponent?: User | null;
   winner: User | null;
 }
 
-export const GameInfo: React.FC<GameInfoProps> = ({
+export const GameInfo = memo(function GameInfo({
   countdown,
   currentTurn,
-  opponentId,
+  opponent,
   winner,
-}) => {
+}: GameInfoProps) {
   return (
-    <div className="flex flex-col items-center space-y-2 mb-4 text-center">
+    <div className="flex flex-col items-center space-y-2 mb-4 text-center" role="status" aria-live="polite">
       {countdown !== null && (
         <p className="text-red-500 font-bold text-xl">
           Przekierowanie za: {countdown}
@@ -24,17 +24,16 @@ export const GameInfo: React.FC<GameInfoProps> = ({
       <p className="text-lg">
         Aktualna tura: <span className="font-bold">{currentTurn?.nickname}</span>
       </p>
-      {opponentId && (
-        <p className="text-gray-300">Przeciwnik: {opponentId.nickname}</p>
-      )}
-      {!opponentId && (
-        <p> Poczekaj na przeciwnika </p>
+      {opponent ? (
+        <p className="text-gray-300">Przeciwnik: {opponent.nickname}</p>
+      ) : (
+        <p>Poczekaj na przeciwnika</p>
       )}
       {winner && (
         <p className="text-green-400 font-bold text-2xl mt-2">
-          WYGRANY: {winner.nickname}
+          Wygrał: {winner.nickname}
         </p>
       )}
     </div>
   );
-};
+});
