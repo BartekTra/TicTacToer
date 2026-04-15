@@ -1,9 +1,9 @@
-import { useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { InputField } from "../../../../components/InputField";
 import { Button } from "../../../../components/Button";
 import { useMutation } from "@apollo/client/react";
 import { REGISTER_USER } from "../../../../graphql/mutations/authorization/registerUser";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import type { User } from "../../../../types/User";
 
 interface RegisterMutationResponseData {
@@ -38,7 +38,7 @@ export const RegisterForm = () => {
     if (validationError) setValidationError("");
   };
 
-  const handleRegisterSubmit = async (e: { preventDefault: () => void }) => {
+  const handleRegisterSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
@@ -58,13 +58,10 @@ export const RegisterForm = () => {
       });
 
       if (response.data?.registerUser.user) {
-        alert("Pomyślnie zarejestrowano");
         navigate("/login");
       }
-
-      console.log("Rejestracja zakonczona: ", response.data);
-    } catch (err) {
-      console.error("Blad podczas rejestracji:", err);
+    } catch {
+      setValidationError("Wystąpił błąd podczas rejestracji. Spróbuj ponownie.");
     }
   };
 
@@ -79,7 +76,7 @@ export const RegisterForm = () => {
         </h2>
 
         {(validationError || apolloError) && (
-          <div className="mb-4 text-sm text-red-600 bg-red-100 p-3 rounded">
+          <div className="mb-4 text-sm text-red-400 bg-red-900/30 p-3 rounded">
             {validationError || apolloError?.message}
           </div>
         )}
@@ -88,17 +85,17 @@ export const RegisterForm = () => {
           label="Nickname"
           id="nickname"
           type="text"
-          placeholder="Your displayed nickname"
+          placeholder="Twój wyświetlany nick"
           required
           value={formData.nickname}
           onChange={handleChange}
         />
 
         <InputField
-          label="Name"
+          label="Imię"
           id="name"
           type="text"
-          placeholder="Your name"
+          placeholder="Twoje imię"
           required
           value={formData.name}
           onChange={handleChange}
@@ -108,7 +105,7 @@ export const RegisterForm = () => {
           label="Adres e-mail"
           id="email"
           type="email"
-          placeholder="your e-mail address"
+          placeholder="twój@email.com"
           required
           value={formData.email}
           onChange={handleChange}
@@ -118,7 +115,7 @@ export const RegisterForm = () => {
           label="Hasło"
           id="password"
           type="password"
-          placeholder="password"
+          placeholder="••••••••"
           required
           value={formData.password}
           onChange={handleChange}
@@ -128,7 +125,7 @@ export const RegisterForm = () => {
           label="Powtórz hasło"
           id="confirmPassword"
           type="password"
-          placeholder="confirm password"
+          placeholder="••••••••"
           required
           value={formData.confirmPassword}
           onChange={handleChange}
@@ -145,22 +142,9 @@ export const RegisterForm = () => {
           />
           <label
             htmlFor="terms"
-            className="ml-2 text-sm text-gray-600 cursor-pointer"
+            className="ml-2 text-sm text-gray-400 cursor-pointer"
           >
-            Akceptuję{" "}
-            <a
-              href="/terms"
-              className="font-medium text-blue-600 hover:underline"
-            >
-              Regulamin
-            </a>{" "}
-            oraz{" "}
-            <a
-              href="/privacy"
-              className="font-medium text-blue-600 hover:underline"
-            >
-              Politykę Prywatności
-            </a>
+            Akceptuję Regulamin oraz Politykę Prywatności
           </label>
         </div>
 
@@ -170,12 +154,12 @@ export const RegisterForm = () => {
 
         <p className="mt-6 text-sm text-center text-gray-500">
           Masz już konto?{" "}
-          <a
-            href="/login"
-            className="font-medium text-blue-600 hover:underline"
+          <Link
+            to="/login"
+            className="font-medium text-blue-400 hover:underline"
           >
             Zaloguj się
-          </a>
+          </Link>
         </p>
       </form>
     </div>
