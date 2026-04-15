@@ -1,36 +1,22 @@
 import { InputField } from "../../../../components/InputField";
 import { Button } from "../../../../components/Button";
-import { useState, type ChangeEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useMutation } from "@apollo/client/react";
 import { LOGIN_USER } from "../../../../graphql/mutations/authorization/loginUser";
 import { type UserLoginResponse } from "./UserLoginResponse";
 import { useAppDispatch } from "../../../../app/hooks";
 import { setCredentials } from "../../../../features/auth/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export const LoginForm = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const handleTestButton = async (index: number) => {
-    let testIndex = "";
-    switch (index) {
-      case 1:
-        testIndex = "";
-        break;
-      case 2:
-        testIndex = "2";
-        break;
-    }
-    await loginUser({
-      variables: { email: `testuje${testIndex}@wp.pl`, password: "12qwaszx" },
-    });
-  };
-
-  const [loginUser] = useMutation<UserLoginResponse>(LOGIN_USER, {
+  const [loginUser, { loading }] = useMutation<UserLoginResponse>(LOGIN_USER, {
     fetchPolicy: "network-only",
     onCompleted: (data) => {
       if (data?.loginUser.user) {
@@ -39,18 +25,14 @@ export const LoginForm = () => {
       }
     },
     onError: (error) => {
-      console.error("błąd logowanie: ", error);
+      setLoginError(error.message || "Wystąpił błąd podczas logowania.");
     },
   });
 
-  const handleLogin = async (e: ChangeEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    try {
-      loginUser({ variables: { email: email, password: password } });
-    } catch (error) {
-      console.error("Błąd logowania:", error);
-    }
+    setLoginError(null);
+    await loginUser({ variables: { email, password } });
   };
 
   return (
@@ -63,11 +45,18 @@ export const LoginForm = () => {
           Zaloguj się
         </h2>
 
+        {loginError && (
+          <div className="mb-4 text-sm text-red-400 bg-red-900/30 p-3 rounded">
+            {loginError}
+          </div>
+        )}
+
         <InputField
           label="Adres e-mail"
           id="email"
           type="email"
           placeholder="jan.kowalski@example.com"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
@@ -77,6 +66,7 @@ export const LoginForm = () => {
           id="password"
           type="password"
           placeholder="••••••••"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
@@ -97,42 +87,22 @@ export const LoginForm = () => {
               Zapamiętaj mnie
             </label>
           </div>
-          <a
-            href="/reset-password"
-            className="text-sm font-medium text-gray-100 hover:underline"
-          >
-            Zapomniałeś hasła?
-          </a>
         </div>
 
-        <Button type="submit">Zaloguj</Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? "Logowanie..." : "Zaloguj"}
+        </Button>
 
         <p className="mt-6 text-sm text-center text-gray-100">
           Nie masz jeszcze konta?{" "}
-          <a
-            href="/register"
-            className="font-medium text-gray-100 hover:underline"
+          <Link
+            to="/register"
+            className="font-medium text-blue-400 hover:underline"
           >
             Zarejestruj się
-          </a>
+          </Link>
         </p>
       </form>
-      {import.meta.env.DEV && (
-        <div>
-          <button
-            onClick={() => handleTestButton(1)}
-            className=" w-50 h-20 bg-gray-300 outline-1 hover:bg-gray-500"
-          >
-            1
-          </button>
-          <button
-            onClick={() => handleTestButton(2)}
-            className="bg-gray-300  w-50 h-20 outline-1 hover:bg-gray-500"
-          >
-            2
-          </button>
-        </div>
-      )}
     </div>
   );
 };

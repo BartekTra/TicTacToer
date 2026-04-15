@@ -30,7 +30,6 @@ const GamePage = () => {
     [handleMoveMutation],
   );
 
-  // Derived state — no redundant useState needed
   const gameBoard = gameData?.board ?? null;
   const currentTurn = gameData?.currentTurn ?? null;
   const winner = gameData?.winner ?? null;
