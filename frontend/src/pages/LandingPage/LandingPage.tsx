@@ -1,64 +1,27 @@
-import { useEffect } from "react";
-import { useMutation } from "@apollo/client/react";
-import { JOIN_GAME } from "../../graphql/mutations/games/joinGame";
-import type { GameData } from "../../types/GameData";
-import { useNavigate } from "react-router-dom";
-
-type JoinGameResponseType = {
-  joinGame: JoinGameResponseData;
-};
-
-type JoinGameResponseData = {
-  game: GameData;
-  message: string;
-};
-
-type GameMode = "classic" | "infinite";
+import { useJoinGame } from "../../hooks/useJoinGame";
+import { Spinner } from "../../components/Spinner";
 
 const LandingPage = () => {
-  const navigate = useNavigate();
-  const [joinGame, { data, loading, error }] =
-    useMutation<JoinGameResponseType>(JOIN_GAME, {
-      fetchPolicy: "network-only",
-      onError: () => {
-        console.log(error);
-      },
-    });
+  const { handleJoin, loading } = useJoinGame();
 
-  const handleGameJoin = (gameType: GameMode) => async () => {
-    try {
-      await joinGame({
-        variables: { gameMode: gameType },
-      });
-    } catch (err) {
-      console.error("Błąd podczas dołączania do gry:", err);
-    }
-  };
-
-  useEffect(() => {
-    if (data?.joinGame.game.id) {
-      navigate(`/game/${data.joinGame.game.id}`);
-    }
-  }, [data]);
-
-  if (loading) return <p className="bg-gray-900">hehe</p>;
+  if (loading) return <Spinner text="Dołączanie do gry..." fullScreen />;
 
   return (
     <div className="h-full bg-gray-900 flex items-center justify-center font-sans">
       <div className="bg-gray-800 border border-gray-700 rounded-sm shadow-2xl p-10 w-80 flex flex-col items-center text-center">
         <h1 className="text-gray-100 text-2xl font-bold uppercase tracking-widest mb-10">
-          dołącz do gry
+          Dołącz do gry
         </h1>
 
         <div className="flex flex-col gap-5 w-full">
           {(["classic", "infinite"] as const).map((mode) => (
             <button
               key={mode}
-              onClick={handleGameJoin(mode)}
+              onClick={() => handleJoin(mode)}
               disabled={loading}
               className="w-full py-3 px-4 bg-gray-900 hover:bg-gray-800 text-gray-200 font-semibold uppercase tracking-wider rounded-sm transition-colors border border-gray-600 focus:outline-none disabled:opacity-50"
             >
-              {loading ? "Ładowanie..." : mode}
+              {mode}
             </button>
           ))}
         </div>

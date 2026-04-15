@@ -25,14 +25,10 @@ export function useJoinGame() {
 
       if (response.data?.joinGame?.game?.id) {
         navigate(`/game/${response.data.joinGame.game.id}`);
-      } else if (response.data?.joinGame?.message) {
-        // Fallback for custom API message handling if no game object was returned
-        alert(response.data.joinGame.message);
       }
-    } catch (err: any) {
-      console.error("Błąd podczas dołączania do gry:", err);
-      // Basic fallback since we don't know if a toast library is present
-      alert(err.message || "Wystąpił błąd podczas dołączania do gry.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Wystąpił błąd podczas dołączania do gry.";
+      alert(message);
     }
   };
 
