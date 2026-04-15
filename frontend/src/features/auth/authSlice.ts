@@ -15,7 +15,6 @@ const authSlice = createSlice({
     setCredentials: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
       state.isAuthenticated = true;
-      console.log(state.user, state.isAuthenticated);
     },
     logout: (state) => {
       state.user = null;
