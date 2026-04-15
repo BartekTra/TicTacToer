@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 
 interface PlayerTimerWrapperProps {
   children: ReactNode;
@@ -6,29 +6,23 @@ interface PlayerTimerWrapperProps {
   duration?: number;
 }
 
-const PlayerTimerWrapper = ({ 
-  children, 
-  isActive, 
-  duration = 15 
+const PlayerTimerWrapper = ({
+  children,
+  isActive,
+  duration = 15,
 }: PlayerTimerWrapperProps) => {
-  const [key, setKey] = useState(0);
-
-  useEffect(() => {
-    if (isActive) {
-      setKey((prev) => prev + 1);
-    }
-  }, [isActive]);
+  const filterId = useId();
 
   return (
     <div className="relative p-4 rounded-sm bg-gray-800 flex items-center justify-center">
       {isActive && (
         <svg
-          key={key}
           className="absolute inset-0 w-full h-full pointer-events-none"
           xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
         >
           <defs>
-            <filter id="fire-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <filter id={`fire-glow-${filterId}`} x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="4" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
@@ -50,7 +44,7 @@ const PlayerTimerWrapper = ({
             pathLength="100"
             strokeDasharray="100"
             strokeDashoffset="0"
-            filter="url(#fire-glow)"
+            filter={`url(#fire-glow-${filterId})`}
             style={{
               animation: `draw-timer ${duration}s linear forwards`,
             }}
