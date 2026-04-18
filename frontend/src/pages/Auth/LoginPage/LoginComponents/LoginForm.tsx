@@ -4,35 +4,40 @@ import { useState, type FormEvent } from "react";
 import { useMutation } from "@apollo/client/react";
 import { LOGIN_USER } from "../../../../graphql/mutations/authorization/loginUser";
 import { type UserLoginResponse } from "./UserLoginResponse";
-import { useAppDispatch } from "../../../../app/hooks";
-import { setCredentials } from "../../../../features/auth/authSlice";
+import { useAuth } from "../../../../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
-  const dispatch = useAppDispatch();
+  const { setUser } = useAuth();
   const navigate = useNavigate();
 
   const [loginUser, { loading }] = useMutation<UserLoginResponse>(LOGIN_USER, {
     fetchPolicy: "network-only",
-    onCompleted: (data) => {
-      if (data?.loginUser.user) {
-        dispatch(setCredentials(data.loginUser.user));
-        navigate("/");
-      }
-    },
-    onError: (error) => {
-      setLoginError(error.message || "Wystąpił błąd podczas logowania.");
-    },
   });
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoginError(null);
-    await loginUser({ variables: { email, password } });
+
+    try {
+      const { data } = await loginUser({ variables: { email, password } });
+
+      if (data?.loginUser.success && data.loginUser.user) {
+        setUser(data.loginUser.user);
+        navigate("/");
+      } else if (data?.loginUser.errors?.length) {
+        setLoginError(data.loginUser.errors.join(", "));
+      } else {
+        setLoginError("Nieprawidłowe dane logowania.");
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Wystąpił błąd podczas logowania.";
+      setLoginError(message);
+    }
   };
 
   return (
@@ -70,24 +75,6 @@ export const LoginForm = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="remember"
-              className="w-4 h-4 text-gray-100 transition duration-150 ease-in-out border-gray-300 rounded cursor-pointer focus:ring-blue-500"
-              onChange={(e) => setRememberMe(e.target.checked)}
-              checked={rememberMe}
-            />
-            <label
-              htmlFor="remember"
-              className="ml-2 text-sm text-gray-100 cursor-pointer"
-            >
-              Zapamiętaj mnie
-            </label>
-          </div>
-        </div>
 
         <Button type="submit" disabled={loading}>
           {loading ? "Logowanie..." : "Zaloguj"}
