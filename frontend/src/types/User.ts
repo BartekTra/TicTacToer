@@ -1,7 +1,7 @@
 export interface User {
-  email: string;
   id: number;
-  name: string;
+  email: string;
+  name?: string;
   nickname: string;
   classicRating: number;
   infiniteRating: number;

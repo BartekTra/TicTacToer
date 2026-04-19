@@ -1,12 +1,13 @@
 import type { User } from "./User";
 
 export interface GameData {
-  action: string | null;
+  action?: string;
   id: number;
   board: string;
   player1: User | null;
   player2: User | null;
   winner: User | null;
-  game_mode: string;
+  gameMode: string;
   currentTurn: User | null;
+  moveCounter: number;
 }
