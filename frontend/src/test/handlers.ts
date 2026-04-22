@@ -25,7 +25,6 @@ const mockOpponent = {
 
 export const handlers = [
   graphql.query("CurrentUser", () => {
-    console.log("CurrentUser mocked executed!");
     return HttpResponse.json({
       data: {
         currentUser: mockUser,

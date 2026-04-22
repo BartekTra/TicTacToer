@@ -33,18 +33,17 @@ const GamePage = () => {
 
       const isMyTurn = gameData.currentTurn?.id == user.id;
       if (!isMyTurn) {
-        console.log("nie twoja tura", gameData.currentTurn?.id==user.id) 
+        alert("nie twoja tura") 
         return;
       }
 
-      console.log("tutaj2");
       const cellValue = gameData.board[cellIndex];
       if (cellValue === "O" || cellValue === "X") return;
-      console.log("tutaj3");
       try {
-        console.log("tutaj4");
         await handleMoveMutation({ variables: { cell: cellIndex } });
       } catch (err) {
+        const error = err as Error;
+        alert(error.message);
         console.error("Move failed:", err);
       }
     },

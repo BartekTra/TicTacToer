@@ -24,7 +24,6 @@ export const LoginForm = () => {
 
     try {
       const { data } = await loginUser({ variables: { email, password } });
-
       if (data?.loginUser.success && data.loginUser.user) {
         setUser(data.loginUser.user);
         navigate("/");
