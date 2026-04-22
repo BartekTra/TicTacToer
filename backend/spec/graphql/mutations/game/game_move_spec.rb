@@ -53,7 +53,7 @@ RSpec.describe Mutations::Game::GameMove do
           before do
             allow(Games::MakeMove).to receive(:call)
               .with(user: user, cell: cell)
-              .and_raise(Games::MakeMove::ValidationError.new("To pole jest już zajęte"))
+              .and_raise(Games::ValidationError.new("To pole jest już zajęte"))
           end
 
           it 'przekazuje błąd serwisu jako błąd GraphQL' do

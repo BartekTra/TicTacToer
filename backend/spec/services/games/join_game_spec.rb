@@ -39,6 +39,7 @@ RSpec.describe Games::JoinGame do
           end
 
           it 'emituje event game.joined' do
+            allow(ActiveSupport::Notifications).to receive(:instrument).and_call_original
             expect(ActiveSupport::Notifications).to receive(:instrument)
               .with("game.joined", hash_including(game: an_instance_of(Game)))
 

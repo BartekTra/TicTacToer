@@ -41,8 +41,8 @@ RSpec.describe Games::Modes::Classic do
 
     context 'remis' do
       it 'nie ustawia winnera przy pełnej planszy' do
-        # Plansza z 8 ruchami, brak wygranej
-        game.update!(board: "OXOOXXOX9", move_counter: 8, current_turn: player1)
+        # Plansza z 8 ruchami, brak wygranej (XOOOXXOX9 → po ruchu: XOOOXXOXO)
+        game.update!(board: "XOOOXXOX9", move_counter: 8, current_turn: player1)
         result = described_class.new(user: player1, game: game, cell: 8).call
 
         expect(result.winner_id).to be_nil

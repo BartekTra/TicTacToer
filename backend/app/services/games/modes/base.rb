@@ -48,13 +48,13 @@ module Games
       def validate_game_rules!
         raise Games::ValidationError, "Nie bierzesz udziału w tej grze" unless [ @game.player1_id, @game.player2_id ].include?(@user.id)
 
-        raise Games::ValidationError, "To nie jest Twoja kolej" unless @game.current_turn_id == @user.id
-
-        raise Games::ValidationError, "To pole jest już zajęte" if @game.board.chars[@cell].in?(%w[O X])
+        raise Games::ValidationError, "Poczekaj na drugiego gracza" unless @game.player1.present? && @game.player2.present?
 
         raise Games::ValidationError, "Gra już się zakończyła" if @game.winner.present?
 
-        raise Games::ValidationError, "Poczekaj na drugiego gracza" unless @game.player1.present? && @game.player2.present?
+        raise Games::ValidationError, "To nie jest Twoja kolej" unless @game.current_turn_id == @user.id
+
+        raise Games::ValidationError, "To pole jest już zajęte" if @game.board.chars[@cell].in?(%w[O X])
       end
 
       def winning_move?(board_array)

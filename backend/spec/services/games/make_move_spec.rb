@@ -25,6 +25,7 @@ RSpec.describe Games::MakeMove do
       end
 
       it 'emituje event game.move_made po zwykłym ruchu' do
+        allow(ActiveSupport::Notifications).to receive(:instrument).and_call_original
         expect(ActiveSupport::Notifications).to receive(:instrument)
           .with("game.move_made", hash_including(game: an_instance_of(Game)))
 
@@ -34,6 +35,7 @@ RSpec.describe Games::MakeMove do
       it 'emituje event game.finished po wygrywającym ruchu' do
         game.update!(board: "OO3456789", move_counter: 4, current_turn: player1)
 
+        allow(ActiveSupport::Notifications).to receive(:instrument).and_call_original
         expect(ActiveSupport::Notifications).to receive(:instrument)
           .with("game.finished", hash_including(game: an_instance_of(Game)))
 
@@ -41,8 +43,9 @@ RSpec.describe Games::MakeMove do
       end
 
       it 'emituje event game.finished po remisie (9 ruch classic)' do
-        game.update!(board: "OXOOXXOX9", move_counter: 8, current_turn: player1)
+        game.update!(board: "XOOOXXOX9", move_counter: 8, current_turn: player1)
 
+        allow(ActiveSupport::Notifications).to receive(:instrument).and_call_original
         expect(ActiveSupport::Notifications).to receive(:instrument)
           .with("game.finished", hash_including(game: an_instance_of(Game)))
 

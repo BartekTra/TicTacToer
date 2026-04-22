@@ -30,24 +30,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const location = useLocation();
   const isAuthPage = AUTH_PAGES.includes(location.pathname);
 
-  const { loading } = useQuery<{ currentUser: User | null }>(CURRENT_USER, {
+  const { loading, data, error } = useQuery<{ currentUser: User | null }>(CURRENT_USER, {
     fetchPolicy: "cache-and-network",
-    onCompleted: (data) => {
-      if (data?.currentUser) {
-        setUserState(data.currentUser);
-        if (isAuthPage) {
-          navigate("/");
-        }
-      } else if (!isAuthPage) {
-        navigate("/login");
-      }
-    },
-    onError: () => {
-      if (!isAuthPage) {
-        navigate("/login");
-      }
-    },
   });
+
+  useEffect(() => {
+    if (loading) return;
+    if (error) {
+      if (!isAuthPage) navigate("/login");
+      return;
+    }
+    if (data?.currentUser) {
+      setUserState(data.currentUser);
+      if (isAuthPage) navigate("/");
+    } else if (!isAuthPage) {
+      navigate("/login");
+    }
+  }, [loading, data, error, isAuthPage, navigate]);
 
   const [logoutMutation] = useMutation(LOGOUT_USER);
 
@@ -64,11 +63,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [logoutMutation, navigate]);
 
-  useEffect(() => {
-    if (!loading && !user && !isAuthPage) {
-      navigate("/login");
-    }
-  }, [loading, user, isAuthPage, navigate]);
 
   if (loading && !user) {
     return <Spinner text="Ładowanie sesji..." fullScreen />;

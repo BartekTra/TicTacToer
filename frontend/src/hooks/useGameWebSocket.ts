@@ -54,14 +54,14 @@ export const useGameWebSocket = (
             setGameData(data);
             setCountdown(3);
 
-            timerRef.current = setTimeout(() => {
+            timerRef.current = window.setTimeout(() => {
               if (subscriptionRef.current) {
                 subscriptionRef.current.unsubscribe();
               }
               setIsGameFinished(true);
             }, 3000);
 
-            intervalRef.current = setInterval(() => {
+            intervalRef.current = window.setInterval(() => {
               setCountdown((current) => {
                 if (current === null || current <= 1) {
                   if (intervalRef.current) clearInterval(intervalRef.current);

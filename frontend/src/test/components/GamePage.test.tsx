@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, waitFor, fireEvent } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { render } from "../test-utils";
 import GamePage from "../../pages/GamePage/GamePage";
 import { server } from "../server";
@@ -88,7 +87,6 @@ describe("GamePage", () => {
       connectionError: null,
     });
 
-    const user = userEvent.setup();
     render(<GamePage />);
 
     // Czekanie na koniec ladowania 
@@ -126,7 +124,6 @@ describe("GamePage", () => {
       connectionError: null,
     });
 
-    const user = userEvent.setup();
     render(<GamePage />);
 
     expect(await screen.findByRole("status")).toBeInTheDocument();
