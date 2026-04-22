@@ -30,7 +30,7 @@ RSpec.describe Games::Modes::Infinite do
         # 6 ruchów w historii: [0,3,1,4,2,5] → najstarszy = 0
         game.update!(
           board: "OXO456OX9",
-          moves_history: [0, 3, 1, 4, 2, 5],
+          moves_history: [ 0, 3, 1, 4, 2, 5 ],
           move_counter: 6,
           current_turn: player1
         )
@@ -58,7 +58,7 @@ RSpec.describe Games::Modes::Infinite do
       it 'pozwala na więcej niż 9 ruchów' do
         game.update!(
           board: "OXO456OX9",
-          moves_history: [0, 3, 1, 4, 2, 5],
+          moves_history: [ 0, 3, 1, 4, 2, 5 ],
           move_counter: 10,
           current_turn: player1
         )

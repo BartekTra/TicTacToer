@@ -4,7 +4,7 @@ class GamesChannel < ApplicationCable::Channel
   def subscribed
     @game = Game.find_by(id: params[:id])
 
-    unless @game && [@game.player1_id, @game.player2_id].include?(current_user.id)
+    unless @game && [ @game.player1_id, @game.player2_id ].include?(current_user.id)
       reject
       return
     end

@@ -14,7 +14,7 @@ module Mutations
       argument :password_confirmation, String, required: true
 
       field :user, Types::UserTypes::UserType, null: true
-      field :errors, [String], null: false
+      field :errors, [ String ], null: false
 
       def resolve(email:, password:, password_confirmation:, name:, nickname:)
         user = User.new(

@@ -11,7 +11,7 @@ module Mutations
       argument :password, String, required: true
 
       field :success, Boolean, null: false
-      field :errors, [String], null: false
+      field :errors, [ String ], null: false
       field :user, Types::UserTypes::UserType, null: true
 
       def resolve(email:, password:)
@@ -33,7 +33,7 @@ module Mutations
           }
           { user: user, success: true, errors: [] }
         else
-          { user: nil, success: false, errors: ["Invalid credentials"] }
+          { user: nil, success: false, errors: [ "Invalid credentials" ] }
         end
       end
     end

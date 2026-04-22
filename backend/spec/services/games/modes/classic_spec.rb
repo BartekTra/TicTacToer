@@ -26,7 +26,7 @@ RSpec.describe Games::Modes::Classic do
 
       it 'zapisuje ruch w historii' do
         result = described_class.new(user: player1, game: game, cell: 4).call
-        expect(result.moves_history).to eq([4])
+        expect(result.moves_history).to eq([ 4 ])
       end
     end
 

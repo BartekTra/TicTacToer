@@ -46,7 +46,5 @@ module Games
 
       { game: game, message: "Dołączono do istniejącej gry" }
     end
-
-
   end
 end
