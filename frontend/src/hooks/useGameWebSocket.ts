@@ -50,7 +50,6 @@ export const useGameWebSocket = (
         received(data: GameData) {
           if (data.action === "Game Finished") {
             clearTimers();
-
             setGameData(data);
             setCountdown(3);
 

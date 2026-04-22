@@ -28,16 +28,21 @@ const GamePage = () => {
 
   const handleMove = useCallback(
     async (cellIndex: number) => {
+      
       if (!gameData || !user) return;
 
-      // Client-side validation
-      const isMyTurn = gameData.currentTurn?.id === user.id;
-      if (!isMyTurn) return;
+      const isMyTurn = gameData.currentTurn?.id == user.id;
+      if (!isMyTurn) {
+        console.log("nie twoja tura", gameData.currentTurn?.id==user.id) 
+        return;
+      }
 
+      console.log("tutaj2");
       const cellValue = gameData.board[cellIndex];
       if (cellValue === "O" || cellValue === "X") return;
-
+      console.log("tutaj3");
       try {
+        console.log("tutaj4");
         await handleMoveMutation({ variables: { cell: cellIndex } });
       } catch (err) {
         console.error("Move failed:", err);

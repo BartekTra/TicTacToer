@@ -30,7 +30,7 @@ module Games
         player1_id: @user.id,
         board: "123456789",
         current_turn_id: @user.id,
-        move_counter: 1,
+        move_counter: 0,
         game_mode: @game_mode
       )
 
