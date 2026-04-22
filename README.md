@@ -83,6 +83,6 @@ Przejdź do `/frontend` i uruchom:
 npm run test
 ```
 
-## Architektura i podejście do kodu (Wybrane zagadnienia)
-- **Service Objects i Czysta Architektura**: Główna logika gry (mechanika wygranych, autoryzacja ruchów) została odłączona od klasycznych kontrolerów czy callbacków z bazami danych do dedykowanych serwisów (np. `Games::MakeMove`, `Games::JoinGame`, `Games::Modes::Classic/Infinite`, `Ratings::CalculateElo`). Aplikacja przestrzega zasad _SOLID_ ze skupieniem wokół _Single Responsibility Principle_.
+## Architektura i podejście do kodu
+- **Service Objects i Czysta Architektura**: Główna logika gry (mechanika wygranych, autoryzacja ruchów) została odłączona od klasycznych kontrolerów czy callbacków z bazami danych do dedykowanych serwisów (np. `Games::MakeMove`, `Games::JoinGame`, `Games::Modes::Classic/Infinite`, `Ratings::CalculateElo`). Aplikacja przestrzega zasad SOLID ze skupieniem wokół Single Responsibility Principle.
 - **Event-Driven Development**: Skryptowanie bazujące na asynchroniczności (np. subskrypcje Eventów z pomocą `GameSubscriber`, który nasłuchuje na pomyślne mutacje w backendzie bez sprzęgania poszczególnych domen wiedzy pod jednym dachem).
