@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Mutations
   module Game
     class GameMove < Mutations::BaseMutation
@@ -17,10 +19,9 @@ module Mutations
           message: "Pomyślnie wykonano ruch w grze",
           game: game
         }
-
       rescue ActiveRecord::RecordNotFound
         raise GraphQL::ExecutionError, "Gra nie znaleziona"
-      rescue Games::MakeMove::ValidationError => e
+      rescue Games::ValidationError => e
         raise GraphQL::ExecutionError, e.message
       end
     end

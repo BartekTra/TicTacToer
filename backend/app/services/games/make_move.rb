@@ -1,6 +1,5 @@
 module Games
   class MakeMove
-    class ValidationError < StandardError; end
     def self.call(user:, cell:)
       game = user.active_game
 

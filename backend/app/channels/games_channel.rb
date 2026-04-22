@@ -1,11 +1,16 @@
+# frozen_string_literal: true
+
 class GamesChannel < ApplicationCable::Channel
   def subscribed
-    @game = Game.find(params[:id])
+    @game = Game.find_by(id: params[:id])
 
-    reject unless [ @game.player1_id, @game.player2_id ].include?(current_user.id)
+    unless @game && [@game.player1_id, @game.player2_id].include?(current_user.id)
+      reject
+      return
+    end
 
     stream_from "GamesChannel_#{@game.id}"
-    @game.broadcast_game
+    GameBroadcaster.broadcast_state(@game)
   end
 
   def unsubscribed

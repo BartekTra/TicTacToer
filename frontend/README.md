@@ -1,73 +1,91 @@
-# React + TypeScript + Vite
+# TicTacToer — Frontend (React + TypeScript)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Real-time multiplayer Tic-Tac-Toe frontend built with React, TypeScript, Apollo Client, and ActionCable.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React** 19 + **TypeScript** 5.9
+- **Vite** 7 — build tool
+- **Apollo Client** 4 — GraphQL client
+- **ActionCable** — WebSocket for real-time game updates
+- **Tailwind CSS** 4 — styling
+- **Vitest** + **Testing Library** — testing
 
-## React Compiler
+## Prerequisites
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+- Node.js 20+
+- npm 10+
+- Backend server running at `http://localhost:3000`
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Install dependencies
+npm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Configure environment
+cp .env.local.example .env.local
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Environment Variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `VITE_BACKEND_URL` | `http://localhost:3000/graphql` | GraphQL endpoint |
+| `VITE_BACKEND_WEBSOCKET_URL` | `ws://localhost:3000/cable` | WebSocket endpoint |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Running
+
+```bash
+# Development server (http://localhost:5173)
+npm run dev
+
+# Production build
+npm run build
+
+# Preview production build
+npm run preview
 ```
+
+## Testing
+
+```bash
+# Run tests once
+npm test
+
+# Watch mode
+npm run test:watch
+
+# Linting
+npm run lint
+```
+
+## Architecture
+
+```
+src/
+├── components/        # Shared UI components (Button, InputField, Spinner)
+├── context/           # React Context (AuthContext)
+├── graphql/
+│   ├── mutations/     # GraphQL mutation definitions
+│   └── queries/       # GraphQL query definitions
+├── hooks/             # Custom hooks (useGameWebSocket, useJoinGame)
+├── pages/
+│   ├── Auth/          # Login & Register pages
+│   ├── GamePage/      # Game board and components
+│   ├── LandingPage/   # Home / join game
+│   ├── MainLayout/    # App shell with navbar
+│   └── NavBar/        # Navigation
+├── test/              # Test setup and specs
+├── types/             # TypeScript interfaces
+├── apolloClient.ts    # Apollo Client configuration
+├── cableConsumer.ts   # ActionCable singleton
+└── router.tsx         # React Router configuration
+```
+
+## Key Features
+
+- **Two game modes**: Classic (standard 3x3) and Infinite (oldest moves disappear after 6 turns)
+- **Real-time updates**: WebSocket-driven game state synchronization
+- **ELO Rating**: Skill-based matchmaking ratings per game mode
+- **Cookie-based auth**: Secure HttpOnly cookie authentication

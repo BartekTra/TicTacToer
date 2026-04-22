@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class User < ActiveRecord::Base
-  has_one :games_as_player1, class_name: "Game", foreign_key: "player1_id"
-  has_one :games_as_player2, class_name: "Game", foreign_key: "player2_id"
+class User < ApplicationRecord
+  has_many :games_as_player1, class_name: "Game", foreign_key: "player1_id"
+  has_many :games_as_player2, class_name: "Game", foreign_key: "player2_id"
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -11,8 +11,6 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   def active_game
-    Game.where(winner_id: nil)
-        .where("player1_id = :id OR player2_id = :id", id: id)
-        .first
+    Game.active.for_player(id).first
   end
 end

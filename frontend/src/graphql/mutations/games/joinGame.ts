@@ -1,38 +1,33 @@
 import { gql } from "@apollo/client";
 
 export const JOIN_GAME = gql`
-mutation JoinGame($gameMode: GameMode!) {
+  mutation JoinGame($gameMode: GameMode!) {
     joinGame(gameMode: $gameMode) {
-        message
-        game {
-            board
-            createdAt
-            gameMode
-            id
-            moveCounter
-            updatedAt
-            winner {
-                email
-                id
-                nickname
-                classicRating
-                infiniteRating
-            }
-            player2 {
-                email
-                id
-                nickname
-                classicRating
-                infiniteRating
-            }
-            player1 {
-                email
-                id
-                nickname
-                classicRating
-                infiniteRating
-            }
+      message
+      game {
+        board
+        gameMode
+        id
+        moveCounter
+        winner {
+          id
+          nickname
+          classicRating
+          infiniteRating
         }
+        player2 {
+          id
+          nickname
+          classicRating
+          infiniteRating
+        }
+        player1 {
+          id
+          nickname
+          classicRating
+          infiniteRating
+        }
+      }
     }
-}
-`
+  }
+`;

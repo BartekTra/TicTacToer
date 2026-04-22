@@ -1,15 +1,13 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import {
-  createConsumer,
-  type Consumer,
-  type Subscription,
-} from "@rails/actioncable";
+import { type Subscription } from "@rails/actioncable";
 import { type GameData } from "../types/GameData";
+import { consumer } from "../cableConsumer";
 
 interface UseGameWebSocketReturn {
   gameData: GameData | null;
   countdown: number | null;
   isGameFinished: boolean;
+  connectionError: string | null;
 }
 
 export const useGameWebSocket = (
@@ -18,8 +16,8 @@ export const useGameWebSocket = (
   const [gameData, setGameData] = useState<GameData | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isGameFinished, setIsGameFinished] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
 
-  const cableRef = useRef<Consumer | null>(null);
   const subscriptionRef = useRef<Subscription | null>(null);
   const timerRef = useRef<number | null>(null);
   const intervalRef = useRef<number | null>(null);
@@ -32,13 +30,23 @@ export const useGameWebSocket = (
   useEffect(() => {
     if (!gameId) return;
 
-    const cableUrl = import.meta.env.VITE_BACKEND_WEBSOCKET_URL as string;
-    const cable = createConsumer(cableUrl);
-    cableRef.current = cable;
+    setConnectionError(null);
 
-    const subscription = cable.subscriptions.create(
+    const subscription = consumer.subscriptions.create(
       { channel: "GamesChannel", id: gameId },
       {
+        connected() {
+          setConnectionError(null);
+        },
+
+        disconnected() {
+          setConnectionError("Utracono połączenie z serwerem");
+        },
+
+        rejected() {
+          setConnectionError("Brak dostępu do tej gry");
+        },
+
         received(data: GameData) {
           if (data.action === "Game Finished") {
             clearTimers();
@@ -74,10 +82,11 @@ export const useGameWebSocket = (
     return () => {
       if (subscriptionRef.current) {
         subscriptionRef.current.unsubscribe();
+        subscriptionRef.current = null;
       }
       clearTimers();
     };
   }, [gameId, clearTimers]);
 
-  return { gameData, countdown, isGameFinished };
+  return { gameData, countdown, isGameFinished, connectionError };
 };

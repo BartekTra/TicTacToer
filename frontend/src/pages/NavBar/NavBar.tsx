@@ -1,29 +1,13 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useMutation } from "@apollo/client/react";
-import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import { logout } from "../../features/auth/authSlice";
-import { LOGOUT_USER } from "../../graphql/mutations/authorization/logoutUser";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import { NavButton } from "./NavBarComponents/NavButton";
 import { JoinGameButton } from "./NavBarComponents/JoinGameButton";
 import { useJoinGame } from "../../hooks/useJoinGame";
 
 export default function Navbar() {
-  const user = useAppSelector((state) => state.auth.user);
+  const { user, handleLogout } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const { handleJoin, loading } = useJoinGame();
-
-  const [logoutMutation] = useMutation(LOGOUT_USER);
-
-  const handleLogout = async () => {
-    try {
-      await logoutMutation();
-    } finally {
-      dispatch(logout());
-      navigate("/login");
-    }
-  };
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-zinc-950/80 backdrop-blur-md">
@@ -65,14 +49,15 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <div className="flex flex-col items-center">
             <span className="hidden text-sm text-zinc-400 sm:block">
-              {user?.email}
+              {user?.nickname}
             </span>
             <div className="flex flex-row space-x-5">
               <span className="hidden text-sm text-zinc-400 sm:block">
                 {user?.classicRating != null && `Classic: ${user.classicRating}`}
               </span>
               <span className="hidden text-sm text-zinc-400 sm:block">
-                {user?.infiniteRating != null && `Infinite: ${user.infiniteRating}`}
+                {user?.infiniteRating != null &&
+                  `Infinite: ${user.infiniteRating}`}
               </span>
             </div>
           </div>

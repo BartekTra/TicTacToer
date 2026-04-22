@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ratings
   class CalculateElo
     K_FACTOR = 32.0
@@ -9,6 +11,7 @@ module Ratings
 
     def call
       return unless @game.player1 && @game.player2
+      return if @game.elo_calculated?
 
       mode = @game.game_mode
       return unless mode.in?(%w[classic infinite])
@@ -32,9 +35,10 @@ module Ratings
       new_p1_rating = (p1_rating + K_FACTOR * (p1_actual - p1_expected)).round
       new_p2_rating = (p2_rating + K_FACTOR * (p2_actual - p2_expected)).round
 
-      User.transaction do
+      ActiveRecord::Base.transaction do
         @game.player1.update!(rating_column => new_p1_rating)
         @game.player2.update!(rating_column => new_p2_rating)
+        @game.update!(elo_calculated: true)
       end
     end
   end

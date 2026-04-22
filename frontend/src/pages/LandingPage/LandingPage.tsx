@@ -2,7 +2,7 @@ import { useJoinGame } from "../../hooks/useJoinGame";
 import { Spinner } from "../../components/Spinner";
 
 const LandingPage = () => {
-  const { handleJoin, loading } = useJoinGame();
+  const { handleJoin, loading, error, clearError } = useJoinGame();
 
   if (loading) return <Spinner text="Dołączanie do gry..." fullScreen />;
 
@@ -12,6 +12,18 @@ const LandingPage = () => {
         <h1 className="text-gray-100 text-2xl font-bold uppercase tracking-widest mb-10">
           Dołącz do gry
         </h1>
+
+        {error && (
+          <div className="mb-4 w-full text-sm text-red-400 bg-red-900/30 p-3 rounded">
+            {error}
+            <button
+              onClick={clearError}
+              className="ml-2 text-red-300 hover:text-white"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         <div className="flex flex-col gap-5 w-full">
           {(["classic", "infinite"] as const).map((mode) => (

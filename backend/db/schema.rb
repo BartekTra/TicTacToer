@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_10_120214) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_17_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,10 +25,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_10_120214) do
     t.jsonb "moves_history", default: []
     t.bigint "player1_id"
     t.bigint "player2_id"
-    t.index [ "current_turn_id" ], name: "index_games_on_current_turn_id"
-    t.index [ "player1_id" ], name: "index_games_on_player1_id"
-    t.index [ "player2_id" ], name: "index_games_on_player2_id"
-    t.index [ "winner_id" ], name: "index_games_on_winner_id"
+    t.boolean "elo_calculated", default: false, null: false
+    t.index ["current_turn_id"], name: "index_games_on_current_turn_id"
+    t.index ["player1_id"], name: "index_games_on_player1_id"
+    t.index ["player2_id"], name: "index_games_on_player2_id"
+    t.index ["winner_id"], name: "index_games_on_winner_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -52,10 +53,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_10_120214) do
     t.datetime "updated_at", null: false
     t.integer "classic_rating", default: 1000
     t.integer "infinite_rating", default: 1000
-    t.index [ "confirmation_token" ], name: "index_users_on_confirmation_token", unique: true
-    t.index [ "email" ], name: "index_users_on_email", unique: true
-    t.index [ "reset_password_token" ], name: "index_users_on_reset_password_token", unique: true
-    t.index [ "uid", "provider" ], name: "index_users_on_uid_and_provider", unique: true
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
   add_foreign_key "games", "users", column: "current_turn_id"

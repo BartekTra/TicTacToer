@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TicTacToerSchema < GraphQL::Schema
+class TictactoerSchema < GraphQL::Schema
   mutation(Types::MutationType)
   query(Types::QueryType)
 

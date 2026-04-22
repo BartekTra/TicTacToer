@@ -1,19 +1,14 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const CURRENT_USER = gql`
-query CurrentUser {
-  currentUser {
-      confirmedAt
-      createdAt
+  query CurrentUser {
+    currentUser {
       email
       id
-      image
       name
       nickname
       classicRating
       infiniteRating
-      provider
-      uid
-      updatedAt
+    }
   }
-}`
+`;

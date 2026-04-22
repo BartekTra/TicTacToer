@@ -11,14 +11,15 @@ module Games
         return { game: existing_game, message: "Już bierzesz udział w grze" }
       end
 
-      game = find_game_with_empty_slot
-      if game
-        Game.transaction do
-          game = find_game_with_empty_slot
-          join_existing_game(game) if game
+      Game.transaction do
+        game = Game.lock.where(game_mode: @game_mode)
+                    .where("player1_id IS NULL OR player2_id IS NULL")
+                    .order(:created_at).first
+        if game
+          join_existing_game(game)
+        else
+          create_new_game
         end
-      else
-        create_new_game
       end
     end
 
@@ -46,11 +47,6 @@ module Games
       { game: game, message: "Dołączono do istniejącej gry" }
     end
 
-    def find_game_with_empty_slot
-      ::Game.where(game_mode: @game_mode)
-            .where("player1_id IS NULL OR player2_id IS NULL")
-            .order(:created_at)
-            .first
-    end
+
   end
 end
