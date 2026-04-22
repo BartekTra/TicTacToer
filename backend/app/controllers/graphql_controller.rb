@@ -23,6 +23,11 @@ class GraphqlController < ApplicationController
     current_user
   end
 
+  def resource_name
+    :user
+  end
+  private :resource_name
+
   def ensure_hash(variables)
     variables.is_a?(String) ? JSON.parse(variables) : variables
   rescue JSON::ParserError
