@@ -2,21 +2,10 @@ module Games
   class MakeMove
     def self.call(user:, cell:)
       game = user.active_game
+      game = game.strategy_class.new(user: user, game: game, cell: cell).call
 
-      strategy_class = case game.game_mode
-      when "infinite" then Modes::Infinite
-      when "classic"  then Modes::Classic
-      else
-        raise ArgumentError, "Nieznany tryb gry: #{game.game_mode}"
-      end
-
-      game = strategy_class.new(user: user, game: game, cell: cell).call
-
-      if game.finished?
-        ActiveSupport::Notifications.instrument("game.finished", game: game)
-      else
-        ActiveSupport::Notifications.instrument("game.move_made", game: game)
-      end
+      event = game.finished? ? "game.finished" : "game.move_made"
+      ActiveSupport::Notifications.instrument(event, game: game)
 
       game
     end

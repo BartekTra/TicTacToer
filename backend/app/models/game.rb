@@ -29,6 +29,17 @@ class Game < ApplicationRecord
 
   private
 
+  def strategy_class
+    classes = {
+      "infinite" => Modes::Infinite,
+      "classic"  => Modes::Classic
+    }
+
+    classes.fetch(game_mode) do
+      raise ArgumentError, "Nieznany tryb gry: #{game_mode}"
+    end
+  end
+
   def players_must_be_different
     if player1_id.present? && player1_id == player2_id
       errors.add(:base, "player1 i player2 nie mogą być tym samym użytkownikiem")
