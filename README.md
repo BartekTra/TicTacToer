@@ -1,4 +1,5 @@
 # TicTacToer (React + Rails + GraphQL)
+[Link do domeny](https://d20g1m0wom82jt.cloudfront.net/) Zapraszam do rozgrywki :)
 
 TicTacToer to nowoczesna, responsywna i pełnostackowa implementacja klasycznej gry w Kółko i Krzyżyk (Tic-Tac-Toe), urozmaicona o tryb Infinite, system rankingowy Elo oraz rozgrywkę w czasie rzeczywistym.
 
