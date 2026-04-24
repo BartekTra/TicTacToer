@@ -18,7 +18,11 @@ module GameSubscriber
 
     def handle_joined(game)
       GameBroadcaster.broadcast_state(game)
-      TurnTimeoutJob.set(wait: 15.seconds).perform_later(game.id, game.move_counter) if game.current_turn_id.present?
+
+      if(game.player1_id != nil && game.player2_id != nil) 
+        TurnTimeoutJob.set(wait: 15.seconds).perform_later(game.id, game.move_counter) if game.current_turn_id.present?
+      end
+
     end
 
     def handle_move_made(game)
