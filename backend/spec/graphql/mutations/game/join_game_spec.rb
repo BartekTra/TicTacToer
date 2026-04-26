@@ -81,7 +81,7 @@ RSpec.describe Mutations::Game::JoinGame do
                 expect(created_game.player1_id).to eq(user.id)
                 expect(created_game.player2_id).to be_nil
                 expect(created_game.current_turn_id).to eq(user.id)
-                expect(created_game.move_counter).to eq(1)
+                expect(created_game.move_counter).to eq(0)
                 expect(created_game.game_mode).to eq(mode)
               end
             end

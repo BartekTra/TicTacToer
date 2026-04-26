@@ -1,15 +1,15 @@
 class Game < ApplicationRecord
   MAX_MOVES = 9
 
-  enum game_mode: {
-    classic: "classic",
-    infinite: "infinite"
-  }
-
   belongs_to :player1, class_name: "User", optional: true
   belongs_to :player2, class_name: "User", optional: true
   belongs_to :current_turn, class_name: "User", optional: true
   belongs_to :winner, class_name: "User", optional: true
+
+  enum game_mode: {
+    classic: "classic",
+    infinite: "infinite"
+  }
 
   scope :active, -> {
     where(winner_id: nil)
@@ -27,18 +27,18 @@ class Game < ApplicationRecord
     winner_id.present? || (classic? && move_counter >= MAX_MOVES)
   end
 
-  private
+  STRATEGY_CLASSES = {
+    "infinite" => "Games::Modes::Infinite",
+    "classic"  => "Games::Modes::Classic"
+  }.freeze
 
   def strategy_class
-    classes = {
-      "infinite" => Modes::Infinite,
-      "classic"  => Modes::Classic
-    }
-
-    classes.fetch(game_mode) do
+    STRATEGY_CLASSES.fetch(game_mode) do
       raise ArgumentError, "Nieznany tryb gry: #{game_mode}"
-    end
+    end.constantize
   end
+
+  private
 
   def players_must_be_different
     if player1_id.present? && player1_id == player2_id
